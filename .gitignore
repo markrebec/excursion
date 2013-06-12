@@ -1,0 +1,20 @@
+## MAC OS
+.DS_Store
+
+## TEXTMATE
+*.tmproj
+tmtags
+
+## EMACS
+*~
+\#*
+.\#*
+
+## VIM
+*.swp
+
+## Gemfile.lock
+Gemfile.lock
+
+## RSpec flags (they're a personal preference)
+.rspec

@@ -1,0 +1,2 @@
+module Excursion
+end
