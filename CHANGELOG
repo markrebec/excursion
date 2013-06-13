@@ -1,3 +1,6 @@
+0.0.4:
+* Properly namespacing keys when using the :memcache datasource
+
 0.0.3:
 * Ability to remove an app from the pool
 * Rake task to remove the running app from the pool
