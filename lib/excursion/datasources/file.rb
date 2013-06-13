@@ -49,7 +49,6 @@ module Excursion
       end
 
       def write_file(results)
-        raise
         FileUtils.mkpath(::File.dirname(@path))
         ::File.open(@path, 'w') { |f| f.write(results.to_yaml)}
       rescue
