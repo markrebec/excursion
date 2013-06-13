@@ -7,8 +7,8 @@ module Excursion
       end
 
       def method_missing(meth, *args)
-        if meth.to_s.match(/\A(#{routes.keys.join("|")})_(url|path)/)
-          routes[$1.to_sym] || super
+        if meth.to_s.match(/\A(#{routes.collect { |name,route| name }.join("|")})_(url|path)\Z/)
+          ActionDispatch::Routing::RouteSet::NamedRouteCollection::UrlHelper.create(routes.get($1.to_sym), @application.default_url_options).call(Rails.application.routes, args)
         else
           super
         end

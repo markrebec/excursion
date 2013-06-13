@@ -7,13 +7,16 @@ module Excursion
           @application_helpers ||= {}
           @application_helpers[app.name] ||= ApplicationHelper.new(app)
         else
-          super
+          begin
+            super
+          rescue NoMethodError => e
+            raise "Excursion URL helper method does not exist: #{meth}"
+          end
         end
       end
     end
-
-    class TestHelper
-      include Helper
-    end
   end
 end
+
+ActionController::Base.send :include, Excursion::Helpers::Helper
+ActionController::Base.send :helper, Excursion::Helpers::Helper

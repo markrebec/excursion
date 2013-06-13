@@ -13,10 +13,9 @@ module Excursion
 
     def self.register_application(app)
       name = app.class.name.underscore.split("/").first
-      config = Excursion.configuration.default_url_options.merge({name: name})
-      routes = Hash[app.routes.routes.select { |r| !r.name.nil? }.collect { |r| [r.name.to_sym, r.path.spec.to_s] }]
+      config = {name: name, default_url_options: Excursion.configuration.default_url_options}
       
-      @@applications[name] = Application.new(config, routes)
+      @@applications[name] = Application.new(config, app.routes.named_routes)
       datasource.set(name, @@applications[name].to_cache)
     end
 
