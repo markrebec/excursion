@@ -1,2 +1,3 @@
-require 'excursion/exceptions/error'
-require 'excursion/exceptions/not_in_pool'
+module Excursion
+  class Error < StandardError; end
+end

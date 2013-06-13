@@ -30,9 +30,12 @@ module Excursion
 
       def initialize(path=nil)
         path ||= Excursion.configuration.datasource_file
+        raise DatasourceConfigurationError, "You must configure the :file datasource with a datasource_file path" if path.nil?
         @path = ::File.expand_path(path)
+      rescue DatasourceConfigurationError => e
+        raise e
       rescue
-        raise "Could not initialize the File datasource. Make sure you have properly configured your datasource"
+        raise DatasourceConfigurationError, "Could not initialize the :file datasource. Make sure you have properly configured the datasource_file path"
       end
 
       def exists?
@@ -46,7 +49,11 @@ module Excursion
       end
 
       def write_file(results)
+        raise
+        FileUtils.mkpath(::File.dirname(@path))
         ::File.open(@path, 'w') { |f| f.write(results.to_yaml)}
+      rescue
+        raise DatasourceConfigurationError, "Could not write to the excursion route pool file: #{@path}"
       end
     end
   end

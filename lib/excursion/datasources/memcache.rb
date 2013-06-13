@@ -1,5 +1,6 @@
 require 'dalli'
 require 'excursion/datasources/datasource'
+require 'excursion/exceptions/memcache'
 
 module Excursion
   module Datasources
@@ -30,6 +31,7 @@ module Excursion
 
       def initialize(server=nil, options={})
         server ||= Excursion.configuration.memcache_server
+        raise MemcacheConfigurationError, "You must configure the :memcache datasource with a memcache_server" if server.nil?
         @client = Dalli::Client.new(server, options)
       end
 
@@ -42,7 +44,7 @@ module Excursion
         if @dalli_retries >= Excursion.configuration.retry_limit
           retries = @dalli_retries
           @dalli_retries = 0
-          raise "Excursion memcache server is down! Retried #{retries} times."
+          raise MemcacheServerError, "Excursion memcache server is down! Retried #{retries} times."
         end
 
         STDERR.puts "Excursion memcache server has gone away! Retrying..."

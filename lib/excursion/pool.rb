@@ -1,4 +1,6 @@
 require 'excursion/pool/application'
+require 'excursion/exceptions/pool'
+require 'excursion/exceptions/datasources'
 
 module Excursion
   module Pool
@@ -20,11 +22,14 @@ module Excursion
     end
 
     def self.datasource
-      raise if Excursion.configuration.datasource.nil?
+      raise NoDatasourceError, "You must configure excursion with a datasource." if Excursion.configuration.datasource.nil?
       require "excursion/datasources/#{Excursion.configuration.datasource.to_s}"
       @@datasource ||= "Excursion::Datasources::#{Excursion.configuration.datasource.to_s.camelize}".constantize.new
-    rescue
-      raise "Could not initialize your datasource. Make sure you have properly configured it"
+    #rescue NoDatasourceError => e
+      #raise e
+    rescue StandardError => e
+      raise e
+      #raise InvalidDatasourceError, "Could not initialize your datasource. Make sure you have properly configured it"
     end
   end
 end
