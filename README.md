@@ -10,15 +10,30 @@ Excursion is written for Rails, which means you should have a Gemfile and be usi
 
 And run `bundle install` to add it to your bundle.
 
+## Configuration
+
 Create an initializer in `/config/initializers/excursion.rb` for configuration:
 
     Excursion.configure do |config|
-      config.datasource = :file # only :file is supported right now
+      # This is a lot like ActionMailer.default_url_options
+      # You should provide at least a host, port is optional
+      config.default_url_options = {host: 'www.example.com', port: 80}
+      
+      # Example using a shared file
+      config.datasource = :file
       config.datasource_file = '/path/to/shared/file'
-      config.default_url_options = {host: 'www.example.com', port: 80} # you should provide a host, port is optional
+
+      # Example using memcache
+      # This requires the `dalli` gem!
+      config.datasource = :memcache
+      config.memcache_server = 'localhost:11211'
     end
 
-That's it. When your application initializes it'll automatically dump it's routes into the route pool, and other applications will have access to them (and this application will have access to other app's routes).
+That's it. When your application initializes it'll automatically dump it's routes into the configured route pool, and other applications will have access to them (and this application will have access to other app's routes).
+
+As noted in the example, if you want to use memcache for the route pool you'll need the [dalli gem](https://github.com/mperham/dalli), so make sure to add it to your Gemfile:
+
+    gem 'dalli'
 
 ## Usage
 
@@ -34,3 +49,20 @@ Once you've configured and launched your applications, you'll have access to the
 
     # AppTwo using a route from AppOne in a view
     <%= link_to "logout", app_one.logout_url %>
+
+If you want to make the helper methods available within some other class, you can simply include them in the class:
+
+    class AppOne::ExampleClass
+      include Excursion::Helpers::ApplicationHelper
+
+      def do_something_with_user(user)
+        # You can then use the helper methods straight away
+        puts app_two.edit_user_url(user)
+      end
+    end
+
+Or you can just use the static helpers, which are globally accessible through `Excursion.url_helpers`:
+
+    Excursion.url_helpers.app_one.signup_url
+    Excursion.url_helpers.app_two.root_url
+    # etc.
