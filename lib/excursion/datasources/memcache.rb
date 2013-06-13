@@ -29,10 +29,10 @@ module Excursion
 
       protected
 
-      def initialize(server=nil, options={})
+      def initialize(server=nil)
         server ||= Excursion.configuration.memcache_server
         raise MemcacheConfigurationError, "You must configure the :memcache datasource with a memcache_server" if server.nil?
-        @client = Dalli::Client.new(server, options)
+        @client = Dalli::Client.new(server, {namespace: "excursion"})
       end
 
       # TODO if we're using memcache, and the server goes away, it might be a good idea
