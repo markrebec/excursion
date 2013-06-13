@@ -1,6 +1,7 @@
 module Excursion
   module Helpers
     class RouteHelper
+      attr_reader :application
 
       def routes
         @application.routes
