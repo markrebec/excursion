@@ -12,7 +12,6 @@ Gem::Specification.new do |s|
   s.test_files  = Dir["spec/**/*"]
   s.homepage    = "http://github.com/markrebec/excursion"
 
-  s.add_dependency "dalli"
   s.add_dependency "rails"
   s.add_development_dependency "rspec-rails"
 end
