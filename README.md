@@ -25,13 +25,15 @@ Excursion.configure do |config|
   # to add it to the pool and make it available to other apps using
   # excursion. Otherwise this app's routes won't be added to the pool.
   #
-  # You will still be able to use the helper methods for any applications
-  # that *are* configured in the pool.
+  # You will still be able to use the pool as a client, and will have
+  # access to the url helpers for any applications that *are* configured
+  # in the pool.
   config.register_app = true # default is true
 
 
-  # This is a lot like ActionMailer.default_url_options. You should
-  # provide at least a host, port is optional.
+  # This is a lot like ActionMailer default_url_options. In fact, if
+  # you have set those default_url_options already, you can just use
+  # them here. You should provide at least a host, port is optional.
   #
   # If this application will not be contributing routes to the pool,
   # this can be left unconfigured.
@@ -64,7 +66,11 @@ As noted in the above examples, using memcache for the route pool requires the [
 
 ## Usage
 
-Once you've configured and launched your applications, you'll have access to the excursion url helpers in your controllers and views. Let's use two applications, `AppOne` and `AppTwo`, as an example.
+Excursion will automatically add this application to the route pool on initialization unless you've configured it to behave otherwise. Once an application has been registered with the route pool, any other applications configured with that same route pool will have access to url helpers for that application.
+
+### URL Helpers
+
+The url helpers are available for use in your controllers and views by default, and can be used just like normal url helpers (except they're namespaced to the parent application). So, for example let's take two applications that need to be able to bounce a user back and forth - `AppOne` and `AppTwo`.
 
 ```ruby
 # AppOne using a route from AppTwo in a controller action
@@ -79,7 +85,7 @@ end
 <%= link_to "logout", app_one.logout_url %>
 ```
 
-If you want to make the helper methods available within some other class, you can simply include them in the class:
+If you want to make the url helpers available within some other class, you can simply include them in the class:
 
 ```ruby
 class AppOne::ExampleClass
@@ -90,6 +96,11 @@ class AppOne::ExampleClass
     puts app_two.edit_user_url(user)
   end
 end
+
+# Or if you need them in a mailer
+class MyMailer < ActionMailer::Base
+  add_template_helper Excursion::Helpers::ApplicationHelper
+end
 ```
 
 Or you can just use the static helpers, which are globally accessible through `Excursion.url_helpers`:
@@ -99,3 +110,13 @@ Excursion.url_helpers.app_one.signup_url
 Excursion.url_helpers.app_two.root_url
 # etc.
 ```
+
+### Rake Tasks
+
+#### `excursion:register`
+
+Registers this application and it's routes with the configured route pool. This happens automatically on initialization unless you've configured excursion to behave otherwise, but this can be handy to pre-populate the pool on deploy when pushing multiple apps.
+
+#### `excursion:remove`
+
+Removes this application and it's routes from the configured route pool.
