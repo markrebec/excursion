@@ -6,10 +6,10 @@ module Excursion
       #
       # Raises an exception if the requested app is not in the route pool.
       def excursion(app_name)
-        raise NotInPool, "Application not registered in the excursion route pool: '#{app_name}'" unless app_exists?(app_name)
+        raise NotInPool, "Application is not registered in the excursion route pool: '#{app_name}'" unless app_exists?(app_name)
         
         @application_helpers ||= {}
-        @application_helpers[app_name] ||= ApplicationHelper.new(excursion_app(app_name))
+        @application_helpers[app_name] ||= RouteHelper.new(excursion_app(app_name))
       end
 
       def method_missing(meth, *args)

@@ -1,6 +1,6 @@
 module Excursion
   module Helpers
-    class ApplicationHelper
+    class RouteHelper
 
       def routes
         @application.routes

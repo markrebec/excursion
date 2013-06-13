@@ -1,4 +1,4 @@
-require 'excursion/helpers/application_helper'
+require 'excursion/helpers/route_helper'
 require 'excursion/helpers/helper'
 
 module Exursion
