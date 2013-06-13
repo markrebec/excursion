@@ -21,6 +21,12 @@ module Excursion
       datasource.set(name, @@applications[name].to_cache)
     end
 
+    def self.remove_application(app)
+      name = app.class.name.underscore.split("/").first
+      datasource.delete(name)
+      @@applications.delete(name)
+    end
+
     def self.datasource
       raise NoDatasourceError, "You must configure excursion with a datasource." if Excursion.configuration.datasource.nil?
       require "excursion/datasources/#{Excursion.configuration.datasource.to_s}"
