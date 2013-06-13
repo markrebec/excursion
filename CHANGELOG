@@ -1,2 +1,7 @@
+0.0.2:
+* Added support for :memcache datasource - requires the dalli gem.
+* Refactored helpers, sharing helpers between instances, global helpers available at Excursion.url_helpers.
+* Custom error classes, improved exception raising/handling
+
 0.0.1:
 * Initial working prototype. Only supports the file datasource.
