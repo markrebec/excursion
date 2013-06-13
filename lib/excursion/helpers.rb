@@ -1,5 +1,5 @@
-require 'excursion/helpers/route_helper'
-require 'excursion/helpers/helper'
+require 'excursion/helpers/url_helper'
+require 'excursion/helpers/application_helper'
 
 module Excursion
   module Helpers
@@ -21,7 +21,7 @@ module Excursion
   end
 
   class StaticHelper
-    include Helpers::Helper
+    include Helpers::ApplicationHelper
   end
 
   # Provides quick global access to url helpers with using the StaticHelper

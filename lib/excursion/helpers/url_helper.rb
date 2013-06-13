@@ -1,6 +1,6 @@
 module Excursion
   module Helpers
-    class RouteHelper
+    class UrlHelper
       attr_reader :application
 
       def routes
