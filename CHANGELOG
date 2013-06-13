@@ -1,3 +1,8 @@
+0.0.3:
+* Ability to remove an app from the pool
+* Rake task to remove the running app from the pool
+* Config option :register_app (defaults to true) to control whether the railtie registers the app on init, allowing you to "disable" excursion but still use helpers from other apps.
+
 0.0.2:
 * Added support for :memcache datasource - requires the dalli gem.
 * Refactored helpers, sharing helpers between instances, global helpers available at Excursion.url_helpers.
