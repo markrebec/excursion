@@ -2,17 +2,30 @@ module Excursion
   module Helpers
     module Helper
       
+      # Returns an Excursion::Helpers::ApplicationHelper if the app exists in the route pool.
+      #
+      # Raises an exception if the requested app is not in the route pool.
+      def excursion(app_name)
+        raise NotInPool, "Application not registered in the excursion route pool: '#{app_name}'" unless app_exists?(app_name)
+        
+        @application_helpers ||= {}
+        @application_helpers[app_name] ||= ApplicationHelper.new(excursion_app(app_name))
+      end
+
       def method_missing(meth, *args)
-        if !(app = Pool.application(meth.to_s)).nil?
-          @application_helpers ||= {}
-          @application_helpers[app.name] ||= ApplicationHelper.new(app)
+        if app_exists?(meth.to_s)
+          excursion(meth.to_s)
         else
-          begin
-            super
-          rescue NoMethodError => e
-            raise "Excursion URL helper method does not exist: #{meth}"
-          end
+          super
         end
+      end
+
+      def app_exists?(app_name)
+        !excursion_app(app_name).nil?
+      end
+
+      def excursion_app(app_name)
+        Pool.application(app_name)
       end
     end
   end

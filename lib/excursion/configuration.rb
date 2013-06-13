@@ -4,7 +4,8 @@ module Excursion
       # TODO
         # exclude_pattern: to exclude certain routes from being shared
         # include_pattern: to only include certain routes
-      default_url_options: {}
+      default_url_options: {}, # default_url_options used when building routes for this app
+      retry_limit: 3 # retry limit for datasources that user remote servers
     }
 
     #attr_reader *DEFAULT_CONFIGURATION_OPTIONS.keys

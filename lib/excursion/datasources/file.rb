@@ -29,7 +29,7 @@ module Excursion
       protected
 
       def initialize(path=nil)
-        path = Excursion.configuration.datasource_file
+        path ||= Excursion.configuration.datasource_file
         @path = ::File.expand_path(path)
       rescue
         raise "Could not initialize the File datasource. Make sure you have properly configured your datasource"

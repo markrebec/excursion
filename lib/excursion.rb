@@ -1,3 +1,4 @@
+require 'excursion/exceptions'
 require 'excursion/configuration'
 
 module Excursion
