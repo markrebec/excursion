@@ -16,7 +16,7 @@ module Excursion
         write_file(current)
         current[key.to_s]
       end
-      alias_method :set, :read
+      alias_method :set, :write
 
       def delete(key)
         current = read_file
