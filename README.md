@@ -16,18 +16,35 @@ Create an initializer in `/config/initializers/excursion.rb` for configuration:
 
 ```ruby
 Excursion.configure do |config|
+  
   # This controls whether this application is automatically added to
-  # the route pool on initialization. If this is false, you will either
-  # have to register this app with the rake task or with 
-  # Excursion::Pool.register_application(Rails.application), or this
-  # apps routes won't be added to the pool. You will still be able to
-  # use the helper methods for any applications that are in the pool.
+  # the route pool on initialization.
+  #
+  # If this is false, you will either have to register this app using
+  # the rake task or Excursion::Pool.register_application(Rails.application)
+  # to add it to the pool and make it available to other apps using
+  # excursion. Otherwise this app's routes won't be added to the pool.
+  #
+  # You will still be able to use the helper methods for any applications
+  # that *are* configured in the pool.
   config.register_app = true # default is true
 
-  # This is a lot like ActionMailer.default_url_options
-  # You should provide at least a host, port is optional
+
+  # This is a lot like ActionMailer.default_url_options. You should
+  # provide at least a host, port is optional.
+  #
+  # If this application will not be contributing routes to the pool,
+  # this can be left unconfigured.
   config.default_url_options = {host: 'www.example.com', port: 80}
-  
+
+
+  # You'll need to configure the datasource you'll be using for the
+  # route pool if you want to contribute to the pool or use it as
+  # a client.
+  #
+  # Right now the two supported types are a yaml :file or :memcache, but 
+  # datasources are planned for :redis and :active_record as well.
+
   # Example using a shared file
   config.datasource = :file
   config.datasource_file = '/path/to/shared/file'
@@ -39,9 +56,9 @@ Excursion.configure do |config|
 end
 ```
 
-That's it. When your application initializes it'll automatically dump it's routes into the configured route pool, and other applications will have access to them (and this application will have access to other app's routes).
+That's it. When your application initializes it'll automatically dump it's routes into the configured route pool (unless configured otherwise). Other applications using excursion will have access to this app's routes and this application will have access to other app's routes via the helper methods.
 
-As noted in the example, if you want to use memcache for the route pool you'll need the [dalli gem](https://github.com/mperham/dalli), so make sure to add it to your Gemfile:
+As noted in the above examples, using memcache for the route pool requires the [dalli gem](https://github.com/mperham/dalli), so make sure to add it to your Gemfile:
 
     gem 'dalli'
 
