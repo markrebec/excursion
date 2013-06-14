@@ -1,10 +1,10 @@
 # Excursion
 
-Provides a pool of routes into which applications can dump their host information and routing table. Other applications configured to use the same pool can utilize namespaced url helpers for redirecting, drawing links, etc. between apps. This is extremely useful when multiple applications are sharing a database and/or are powered by a shared rails engine. 
+Provides a pool of routes into which applications can dump their host information and routing table. Other applications configured to use the same pool can utilize namespaced url helpers for redirecting, drawing links, etc. between apps. This is extremely useful when multiple applications are sharing a database and/or are powered by a shared [rails engine](http://edgeapi.rubyonrails.org/classes/Rails/Engine.html). 
 
-For example, you might have an admin or CMS application running separately from your user-facing frontend application. These apps would be sharing a database, and would likely be sharing models and other functionality via a gem or rails engine. If you wanted to add a link to a user's profile (in the frontend app) from the admin edit user screen, you would have to do something like this:
+For example, you might have an admin or CMS application running separately from your user-facing frontend application. These apps would be sharing a database, and would likely be sharing models and other functionality via a gem or rails engine. If you wanted to add a link to a user's profile endpoint in the frontend app, from the admin edit user screen, you would have to do something like this:
 
-```ruby
+```erb
 <%= link_to "user profile", "http://frontend_app.example.com/users/#{@user.username}" %>
 ```
 
@@ -12,23 +12,23 @@ Maybe you have some default url options setup to help with the host, port, etc.,
 
 With excursion, once an app has registered itself with the route pool, the above becomes:
 
-```ruby
+```erb
 <%= link_to "user profile", frontend_app.user_url(@user) %>
 ```
 
-And with excursion's default configuration, every time an application initializes it will update it's routing table in the pool, so you don't have to worry about maintaining hardcoded paths in your applications. Of course, if you change the name of the route, you'll still have to update any calls to the namespaced url helper for that route in any apps that use it (just like you would need to update the normal url helpers within the app where you're making that change).
+The namespaced url helpers work just like rails default helpers, and with excursion's default configuration every time an application initializes it will update it's routing table in the pool, so you don't have to worry about maintaining hardcoded paths in your applications. Of course, if you change the name of the route, you'll still have to update any calls to the namespaced url helper for that route in any apps that use it (just like you would need to update the normal url helpers within the app where you're making that change).
 
 If you want to go the other way, and add a link on your user profile pages to ban the user (only for your admins of course!) using an endpoint in the admin app, it's just as easy:
 
-```ruby
+```erb
 <%= link_to "ban this user", admin_app.ban_user_url(@user) %>
 ```
 
 ### How it works
 
-When an application registers itself with the route pool, a simple hash of config values and route names & paths (the `/users/:user_id/edit` path spec definitions) for that application are dumped into the pool. The datastore for the pool is configurable.
+When an application registers itself with the route pool, a simple hash of config values and route names & paths (the `/users/:user_id/edit` path spec definitions) for that application are dumped into the pool.
 
-Any other applications using excursion and configured with the same route pool will then have access to the namespaces url helpers for any apps registered with that pool. An application does not have to register itself with the pool to be able to use excursion as a client and utilize other app's namespaced helpers.
+Any other applications using excursion and configured with the same route pool will then have access to the namespaced url helpers for any apps registered with that pool. An application does not have to register itself with the pool to be able to use excursion as a client and utilize other app's namespaced helpers.
 
 The url helpers are automatically included into your controllers and views, and allow you to do things like `admin_app.edit_user_url(@user)` from any of your applications. These helper methods will check the route pool to see if the requested application exists, and will attempt to locate the named route and handle the variable replacement and default url options to generate a url like `http://admin_app.example.com/users/1/edit`.
 
