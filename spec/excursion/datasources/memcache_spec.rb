@@ -1,29 +1,30 @@
 require 'spec_helper'
-require 'excursion/datasources/file'
+require 'excursion/datasources/memcache'
 
-describe 'Excursion::Datasources::File' do
+describe 'Excursion::Datasources::Memcache' do
 
-  def fill_pool(file)
-    File.open(file, 'w') do |f|
-      f.write(Excursion::Specs::Fixtures::Datasources::POOL.to_yaml)
+  def fill_pool(server)
+    dc = Dalli::Client.new(server, {namespace: 'excursion'})
+    Excursion::Specs::Fixtures::Datasources::POOL.each do |k,v|
+      dc.write(k,v)
     end
   end
 
   context 'Initialization' do
-    # TODO File should not depend on excursion configuration, we should be passing in the configured file path on init
+    # TODO Memcache should not depend on excursion configuration, we should be passing in the configured file path on init
     # rework these specs to represent that, then make the changes
     #before(:each) { Excursion.configure { |c| c.datasource_file = Dir.pwd } }
     
     it 'should require a path' do
-      expect { Excursion::Datasources::File.new }.to raise_exception(Excursion::DatasourceConfigurationError)
-      expect { Excursion::Datasources::File.new Dir.pwd }.to_not raise_exception
+      expect { Excursion::Datasources::Memcache.new }.to raise_exception(Excursion::DatasourceConfigurationError)
+      expect { Excursion::Datasources::Memcache.new 'localhost:11211' }.to_not raise_exception
     end
   end
 
   describe '#read' do
     subject do
-      fill_pool File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
-      Excursion::Datasources::File.new File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
+      fill_pool 'localhost:11211'
+      Excursion::Datasources::Memcache.new 'localhost:11211'
     end
 
     describe 'key' do
@@ -59,8 +60,8 @@ describe 'Excursion::Datasources::File' do
 
   describe '#write' do
     subject do
-      fill_pool File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
-      Excursion::Datasources::File.new File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
+      fill_pool 'localhost:11211'
+      Excursion::Datasources::Memcache.new 'localhost:11211'
     end
     
     describe 'key' do
@@ -97,8 +98,8 @@ describe 'Excursion::Datasources::File' do
 
   context '#delete' do
     subject do
-      fill_pool File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
-      Excursion::Datasources::File.new File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
+      fill_pool 'localhost:11211'
+      Excursion::Datasources::Memcache.new 'localhost:11211'
     end
     
     describe 'key' do
