@@ -4,12 +4,12 @@ require 'excursion/datastores/file'
 describe 'Excursion::Datastores::File' do
 
   def dummy_pool
-    File.expand_path('../../../dummy/tmp/spec_pool.yml', __FILE__)
+    Excursion::Specs::DUMMY_POOL_FILE
   end
 
   def fill_pool
     File.open(dummy_pool, 'w') do |f|
-      f.write(Excursion::Specs::Datastores::Mocks::SIMPLE_POOL.to_yaml)
+      f.write(Excursion::Specs::Mocks::SIMPLE_VALUES.to_yaml)
     end
   end
   
@@ -52,7 +52,7 @@ describe 'Excursion::Datastores::File' do
 
     context 'when the requested key exists' do
       it 'should return the value of the requested key' do
-        Excursion::Specs::Datastores::Mocks::SIMPLE_POOL.each do |key,val|
+        Excursion::Specs::Mocks::SIMPLE_VALUES.each do |key,val|
           expect(subject.read(key)).to eql(val)
         end
       end

@@ -4,12 +4,12 @@ require 'excursion/datastores/memcache'
 describe 'Excursion::Datastores::Memcache' do
 
   def dummy_pool
-    'localhost:11211'
+    Excursion::Specs::DUMMY_MEMCACHE_SERVER
   end
 
   def fill_pool
     dc = Dalli::Client.new dummy_pool, {namespace: 'excursion'}
-    Excursion::Specs::Datastores::Mocks::SIMPLE_POOL.each do |key,val|
+    Excursion::Specs::Mocks::SIMPLE_VALUES.each do |key,val|
       dc.set(key,val)
     end
   end
@@ -53,7 +53,7 @@ describe 'Excursion::Datastores::Memcache' do
 
     context 'when the requested key exists' do
       it 'should return the value of the requested key' do
-        Excursion::Specs::Datastores::Mocks::SIMPLE_POOL.each do |key,val|
+        Excursion::Specs::Mocks::SIMPLE_VALUES.each do |key,val|
           expect(subject.read(key)).to eql(val)
         end
       end

@@ -17,8 +17,8 @@ describe 'Excursion::Pool::Application' do
     end
 
     it 'should return a populated Application object' do
-      mock = Excursion::Specs::Datastores::Mocks::SIMPLE_APP
-      mock_routes = Excursion::Specs::Datastores::Mocks::NAMED_ROUTES
+      mock = Excursion::Specs::Mocks::SIMPLE_APP
+      mock_routes = Excursion::Specs::Mocks::NAMED_ROUTES
       
       app = Excursion::Pool::Application.new mock[:name], {default_url_options: mock[:default_url_options], registered_at: mock[:registered_at]}, mock_routes
       app.should be_an_instance_of(Excursion::Pool::Application)
@@ -36,7 +36,7 @@ describe 'Excursion::Pool::Application' do
     end
 
     it 'should return an Application object with the cached properties' do
-      mock = Excursion::Specs::Datastores::Mocks::SIMPLE_APP
+      mock = Excursion::Specs::Mocks::SIMPLE_APP
       
       app = Excursion::Pool::Application.from_cache(mock)
       app.should be_an_instance_of(Excursion::Pool::Application)
@@ -49,7 +49,7 @@ describe 'Excursion::Pool::Application' do
   end
 
   describe '#to_cache' do
-    subject { Excursion::Pool::Application.from_cache(Excursion::Specs::Datastores::Mocks::SIMPLE_APP) }
+    subject { Excursion::Pool::Application.from_cache(Excursion::Specs::Mocks::SIMPLE_APP) }
 
     it 'should return a hash' do
       subject.to_cache.should be_an_instance_of(Hash)
@@ -85,7 +85,7 @@ describe 'Excursion::Pool::Application' do
     end
 
     it 'should populate the object with the cached values' do
-      mock = Excursion::Specs::Datastores::Mocks::SIMPLE_APP
+      mock = Excursion::Specs::Mocks::SIMPLE_APP
       subject.from_cache(mock)
       subject.default_url_options.should eql(mock[:default_url_options])
       subject.instance_variable_get(:@registered_at).should eql(mock[:registered_at])
@@ -96,7 +96,7 @@ describe 'Excursion::Pool::Application' do
   end
 
   describe '#route' do
-    subject { Excursion::Pool::Application.from_cache(Excursion::Specs::Datastores::Mocks::SIMPLE_APP) }
+    subject { Excursion::Pool::Application.from_cache(Excursion::Specs::Mocks::SIMPLE_APP) }
     
     it 'should require a name' do
       expect { subject.route }.to raise_exception(ArgumentError)
@@ -120,7 +120,7 @@ describe 'Excursion::Pool::Application' do
   end
 
   describe '#routes' do
-    subject { Excursion::Pool::Application.from_cache(Excursion::Specs::Datastores::Mocks::SIMPLE_APP) }
+    subject { Excursion::Pool::Application.from_cache(Excursion::Specs::Mocks::SIMPLE_APP) }
 
     it 'should return a NamedRouteCollection' do
       subject.routes.should be_an_instance_of(ActionDispatch::Routing::RouteSet::NamedRouteCollection)
@@ -149,8 +149,8 @@ describe 'Excursion::Pool::Application' do
     
     context 'when passing a Hash' do
       it 'should override the application routes with the ones provided' do
-        subject.routes = Hash[Excursion::Specs::Datastores::Mocks::NAMED_ROUTES.collect {|k,v| [k,v] }]
-        Excursion::Specs::Datastores::Mocks::NAMED_ROUTES.each do |name,path|
+        subject.routes = Hash[Excursion::Specs::Mocks::NAMED_ROUTES.collect {|k,v| [k,v] }]
+        Excursion::Specs::Mocks::NAMED_ROUTES.each do |name,path|
           subject.routes.routes.keys.should include(name)
         end
       end
@@ -158,8 +158,8 @@ describe 'Excursion::Pool::Application' do
 
     context 'when passing a NamedRouteCollection' do
       it 'should override the application routes with the ones provided' do
-        subject.routes = Excursion::Specs::Datastores::Mocks::NAMED_ROUTES
-        Excursion::Specs::Datastores::Mocks::NAMED_ROUTES.each do |name,path|
+        subject.routes = Excursion::Specs::Mocks::NAMED_ROUTES
+        Excursion::Specs::Mocks::NAMED_ROUTES.each do |name,path|
           subject.routes.routes.keys.should include(name)
         end
       end
@@ -194,8 +194,8 @@ describe 'Excursion::Pool::Application' do
     
     context 'when passing a Hash' do
       it 'should override the application routes with the ones provided' do
-        subject.set_routes Hash[Excursion::Specs::Datastores::Mocks::NAMED_ROUTES.collect {|k,v| [k,v] }]
-        Excursion::Specs::Datastores::Mocks::NAMED_ROUTES.each do |name,path|
+        subject.set_routes Hash[Excursion::Specs::Mocks::NAMED_ROUTES]
+        Excursion::Specs::Mocks::NAMED_ROUTES.each do |name,path|
           subject.routes.routes.keys.should include(name)
         end
       end
@@ -203,8 +203,8 @@ describe 'Excursion::Pool::Application' do
 
     context 'when passing a NamedRouteCollection' do
       it 'should override the application routes with the ones provided' do
-        subject.set_routes Excursion::Specs::Datastores::Mocks::NAMED_ROUTES
-        Excursion::Specs::Datastores::Mocks::NAMED_ROUTES.each do |name,path|
+        subject.set_routes Excursion::Specs::Mocks::NAMED_ROUTE_COLLECTION
+        Excursion::Specs::Mocks::NAMED_ROUTES.each do |name,path|
           subject.routes.routes.keys.should include(name)
         end
       end
