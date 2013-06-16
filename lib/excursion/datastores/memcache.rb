@@ -14,14 +14,15 @@ module Excursion
       alias_method :get, :read
 
       def write(key, value)
-        @client.set(key.to_s, value)
+        value if @client.set(key.to_s, value)
       rescue Dalli::RingError => e
         rescue_from_dalli_ring_error(e) && retry
       end
       alias_method :set, :write
 
       def delete(key)
-        @client.delete(key)
+        value = @client.get(key)
+        value if @client.delete(key)
       rescue Dalli::RingError => e
         rescue_from_dalli_ring_error(e) && retry
       end
@@ -29,9 +30,8 @@ module Excursion
 
       protected
 
-      def initialize(server=nil)
-        server ||= Excursion.configuration.memcache_server
-        raise MemcacheConfigurationError, "You must configure the :memcache datastore with a memcache_server" if server.nil?
+      def initialize(server)
+        raise MemcacheConfigurationError, "Memcache server cannot be nil" if server.nil? || server.empty?
         @client = Dalli::Client.new(server, {namespace: "excursion"})
       end
 
@@ -47,7 +47,7 @@ module Excursion
           raise MemcacheServerError, "Excursion memcache server is down! Retried #{retries} times."
         end
 
-        STDERR.puts "Excursion memcache server has gone away! Retrying..."
+        #STDERR.puts "Excursion memcache server has gone away! Retrying..."
         sleep 1 # give it a chance to come back
         @dalli_retries += 1
       end

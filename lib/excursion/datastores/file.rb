@@ -28,14 +28,11 @@ module Excursion
 
       protected
 
-      def initialize(path=nil)
-        path ||= Excursion.configuration.datastore_file
-        raise DatastoreConfigurationError, "You must configure the :file datastore with a datastore_file path" if path.nil?
+      def initialize(path)
+        raise DatastoreConfigurationError if path.nil? || path.empty?
         @path = ::File.expand_path(path)
-      rescue DatastoreConfigurationError => e
-        raise e
       rescue
-        raise DatastoreConfigurationError, "Could not initialize the :file datastore. Make sure you have properly configured the datastore_file path"
+        raise DatastoreConfigurationError, "Could not initialize the :file datastore with path: '#{path}'"
       end
 
       def exists?

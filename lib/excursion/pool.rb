@@ -30,12 +30,15 @@ module Excursion
     def self.datastore
       raise NoDatastoreError, "You must configure excursion with a datastore." if Excursion.configuration.datastore.nil?
       require "excursion/datastores/#{Excursion.configuration.datastore.to_s}"
-      @@datastore ||= "Excursion::Datastores::#{Excursion.configuration.datastore.to_s.camelize}".constantize.new
-    #rescue NoDatastoreError => e
-      #raise e
-    rescue StandardError => e
-      raise e
-      #raise InvalidDatastoreError, "Could not initialize your datastore. Make sure you have properly configured it"
+
+      case Excursion.configuration.datastore.to_sym
+      when :file
+        raise DatastoreConfigurationError, "You must configure the :file datastore with a datastore_file path" if Excursion.configuration.datastore_file.nil?
+        @@datastore ||= Excursion::Datastores::File.new(Excursion.configuration.datastore_file)
+      when :memcache
+        raise MemcacheConfigurationError, "You must configure the :memcache datastore with a memcache_server" if Excursion.configuration.memcache_server.nil?
+        @@datastore ||= Excursion::Datastores::Memcache.new(Excursion.configuration.memcache_server)
+      end
     end
   end
 end
