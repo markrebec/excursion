@@ -15,7 +15,7 @@ describe 'Excursion::Datasources::File' do
     #before(:each) { Excursion.configure { |c| c.datasource_file = Dir.pwd } }
     
     it 'should require a path' do
-      expect { Excursion::Datasources::File.new }.to raise_exception
+      expect { Excursion::Datasources::File.new }.to raise_exception(Excursion::DatasourceConfigurationError)
       expect { Excursion::Datasources::File.new Dir.pwd }.to_not raise_exception
     end
   end
@@ -85,20 +85,8 @@ describe 'Excursion::Datasources::File' do
 
     describe 'value' do
       it 'should be required' do
-        expect { subject.write('test_key') }.to raise_exception
+        expect { subject.write('test_key') }.to raise_exception(ArgumentError)
       end
-    end
-
-    context 'simple values' do
-      it 'can be stored'
-    end
-
-    context 'complex structures' do
-      it 'can be stored'
-    end
-
-    context 'ruby objects and classes' do
-      it 'can be stored'
     end
 
     it 'should add the key to the datastore and set the value' do
@@ -112,9 +100,31 @@ describe 'Excursion::Datasources::File' do
   end
 
   context '#delete' do
-    it 'should require a key'
-    it 'should remove the key from the datastore'
-    it 'should return the value of the deleted key'
+    subject do
+      fill_pool File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
+      Excursion::Datasources::File.new File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
+    end
+    
+    describe 'key' do
+      it 'should be required' do
+        expect { subject.delete }.to raise_exception(ArgumentError)
+      end
+    end
+    
+    it 'should remove the key from the datastore' do
+      subject.read('key1').should_not eql(nil)
+      subject.delete('key1')
+      subject.read('key1').should be(nil)
+    end
+
+    it 'should return the value of the deleted key if it exists' do
+      keyval = subject.read('key1')
+      subject.delete('key1').should eql(keyval)
+    end
+
+    it 'should return nil if the deleted key does not exist' do
+      subject.delete('non_existent_key').should eql(nil)
+    end
   end
 
 end
