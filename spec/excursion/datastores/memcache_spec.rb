@@ -1,40 +1,43 @@
 require 'spec_helper'
-require 'excursion/datastores/file'
+require 'excursion/datastores/memcache'
 
-describe 'Excursion::Datastores::File' do
+describe 'Excursion::Datastores::Memcache' do
 
-  def fill_pool(file)
-    File.open(file, 'w') do |f|
-      f.write(Excursion::Specs::Fixtures::Datastores::POOL.to_yaml)
-    end
+  def dummy_pool
+    'localhost:11211'
   end
 
+  def fill_pool
+    dc = Dalli::Client.new dummy_pool, {namespace: 'excursion'}
+    Excursion::Specs::Fixtures::Datastores::POOL.each do |key,val|
+      dc.set(key,val)
+    end
+  end
+  
+  subject do
+    fill_pool
+    Excursion::Datastores::Memcache.new dummy_pool
+  end
+
+
   context 'Initialization' do
-    # TODO File should not depend on excursion configuration, we should be passing in the configured file path on init
-    # rework these specs to represent that, then make the changes
-    #before(:each) { Excursion.configure { |c| c.datastore_file = Dir.pwd } }
-    
-    it 'should require a path' do
-      expect { Excursion::Datastores::File.new }.to raise_exception(Excursion::DatastoreConfigurationError)
-      expect { Excursion::Datastores::File.new Dir.pwd }.to_not raise_exception
+    it 'should require a server' do
+      expect { Excursion::Datastores::Memcache.new }.to raise_exception(ArgumentError)
+      expect { Excursion::Datastores::Memcache.new nil }.to raise_exception(Excursion::MemcacheConfigurationError)
+      expect { Excursion::Datastores::Memcache.new dummy_pool }.to_not raise_exception
     end
   end
 
   describe '#read' do
-    subject do
-      fill_pool File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
-      Excursion::Datastores::File.new File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
-    end
-
     describe 'key' do
       it 'should be required' do
         expect { subject.read }.to raise_exception
-        expect { subject.read('key1') }.to_not raise_exception
+        expect { subject.read('test_key') }.to_not raise_exception
       end
 
       it 'should accept a symbol or string' do
-        expect { subject.read('key1') }.to_not raise_exception
-        expect { subject.read(:key1) }.to_not raise_exception
+        expect { subject.read('test_key') }.to_not raise_exception
+        expect { subject.read(:testk_key) }.to_not raise_exception
       end
 
       it 'should convert symbols to strings' do
@@ -58,11 +61,6 @@ describe 'Excursion::Datastores::File' do
   end
 
   describe '#write' do
-    subject do
-      fill_pool File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
-      Excursion::Datastores::File.new File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
-    end
-    
     describe 'key' do
       it 'should be required' do
         expect { subject.write }.to raise_exception
@@ -96,11 +94,6 @@ describe 'Excursion::Datastores::File' do
   end
 
   context '#delete' do
-    subject do
-      fill_pool File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
-      Excursion::Datastores::File.new File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
-    end
-    
     describe 'key' do
       it 'should be required' do
         expect { subject.delete }.to raise_exception(ArgumentError)

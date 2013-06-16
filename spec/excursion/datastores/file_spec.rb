@@ -1,41 +1,42 @@
 require 'spec_helper'
-require 'excursion/datastores/memcache'
+require 'excursion/datastores/file'
 
-describe 'Excursion::Datastores::Memcache' do
+describe 'Excursion::Datastores::File' do
 
-  def fill_pool(server)
-    dc = Dalli::Client.new(server, {namespace: 'excursion'})
-    Excursion::Specs::Fixtures::Datastores::POOL.each do |k,v|
-      dc.write(k,v)
-    end
+  def dummy_pool
+    File.expand_path('../../../dummy/tmp/spec_pool.yml', __FILE__)
   end
 
+  def fill_pool
+    File.open(dummy_pool, 'w') do |f|
+      f.write(Excursion::Specs::Fixtures::Datastores::POOL.to_yaml)
+    end
+  end
+  
+  subject do
+    fill_pool
+    Excursion::Datastores::File.new dummy_pool
+  end
+
+
   context 'Initialization' do
-    # TODO Memcache should not depend on excursion configuration, we should be passing in the configured file path on init
-    # rework these specs to represent that, then make the changes
-    #before(:each) { Excursion.configure { |c| c.datastore_file = Dir.pwd } }
-    
     it 'should require a path' do
-      expect { Excursion::Datastores::Memcache.new }.to raise_exception(Excursion::DatastoreConfigurationError)
-      expect { Excursion::Datastores::Memcache.new 'localhost:11211' }.to_not raise_exception
+      expect { Excursion::Datastores::File.new }.to raise_exception(ArgumentError)
+      expect { Excursion::Datastores::File.new nil }.to raise_exception(Excursion::DatastoreConfigurationError)
+      expect { Excursion::Datastores::File.new dummy_pool }.to_not raise_exception
     end
   end
 
   describe '#read' do
-    subject do
-      fill_pool 'localhost:11211'
-      Excursion::Datastores::Memcache.new 'localhost:11211'
-    end
-
     describe 'key' do
       it 'should be required' do
         expect { subject.read }.to raise_exception
-        expect { subject.read('key1') }.to_not raise_exception
+        expect { subject.read('test_key') }.to_not raise_exception
       end
 
       it 'should accept a symbol or string' do
-        expect { subject.read('key1') }.to_not raise_exception
-        expect { subject.read(:key1) }.to_not raise_exception
+        expect { subject.read('test_key') }.to_not raise_exception
+        expect { subject.read(:test_key) }.to_not raise_exception
       end
 
       it 'should convert symbols to strings' do
@@ -59,11 +60,6 @@ describe 'Excursion::Datastores::Memcache' do
   end
 
   describe '#write' do
-    subject do
-      fill_pool 'localhost:11211'
-      Excursion::Datastores::Memcache.new 'localhost:11211'
-    end
-    
     describe 'key' do
       it 'should be required' do
         expect { subject.write }.to raise_exception
@@ -97,11 +93,6 @@ describe 'Excursion::Datastores::Memcache' do
   end
 
   context '#delete' do
-    subject do
-      fill_pool 'localhost:11211'
-      Excursion::Datastores::Memcache.new 'localhost:11211'
-    end
-    
     describe 'key' do
       it 'should be required' do
         expect { subject.delete }.to raise_exception(ArgumentError)
