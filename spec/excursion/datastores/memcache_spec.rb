@@ -37,7 +37,7 @@ describe 'Excursion::Datastores::Memcache' do
 
       it 'should accept a symbol or string' do
         expect { subject.read('test_key') }.to_not raise_exception
-        expect { subject.read(:testk_key) }.to_not raise_exception
+        expect { subject.read(:test_key) }.to_not raise_exception
       end
 
       it 'should convert symbols to strings' do
