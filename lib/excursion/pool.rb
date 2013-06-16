@@ -14,6 +14,8 @@ module Excursion
     end
 
     def self.register_application(app)
+      raise ArgumentError, "app must be an instance of Rails::Application" unless app.is_a?(Rails::Application)
+      
       name = app.class.name.underscore.split("/").first
       config = {default_url_options: Excursion.configuration.default_url_options}
       
@@ -22,6 +24,8 @@ module Excursion
     end
 
     def self.remove_application(app)
+      raise ArgumentError, "app must be an instance of Rails::Application" unless app.is_a?(Rails::Application)
+      
       name = app.class.name.underscore.split("/").first
       datastore.delete(name)
       @@applications.delete(name)
