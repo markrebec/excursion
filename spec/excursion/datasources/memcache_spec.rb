@@ -1,11 +1,11 @@
 require 'spec_helper'
-require 'excursion/datasources/memcache'
+require 'excursion/datastores/memcache'
 
-describe 'Excursion::Datasources::Memcache' do
+describe 'Excursion::Datastores::Memcache' do
 
   def fill_pool(server)
     dc = Dalli::Client.new(server, {namespace: 'excursion'})
-    Excursion::Specs::Fixtures::Datasources::POOL.each do |k,v|
+    Excursion::Specs::Fixtures::Datastores::POOL.each do |k,v|
       dc.write(k,v)
     end
   end
@@ -13,18 +13,18 @@ describe 'Excursion::Datasources::Memcache' do
   context 'Initialization' do
     # TODO Memcache should not depend on excursion configuration, we should be passing in the configured file path on init
     # rework these specs to represent that, then make the changes
-    #before(:each) { Excursion.configure { |c| c.datasource_file = Dir.pwd } }
+    #before(:each) { Excursion.configure { |c| c.datastore_file = Dir.pwd } }
     
     it 'should require a path' do
-      expect { Excursion::Datasources::Memcache.new }.to raise_exception(Excursion::DatasourceConfigurationError)
-      expect { Excursion::Datasources::Memcache.new 'localhost:11211' }.to_not raise_exception
+      expect { Excursion::Datastores::Memcache.new }.to raise_exception(Excursion::DatastoreConfigurationError)
+      expect { Excursion::Datastores::Memcache.new 'localhost:11211' }.to_not raise_exception
     end
   end
 
   describe '#read' do
     subject do
       fill_pool 'localhost:11211'
-      Excursion::Datasources::Memcache.new 'localhost:11211'
+      Excursion::Datastores::Memcache.new 'localhost:11211'
     end
 
     describe 'key' do
@@ -51,7 +51,7 @@ describe 'Excursion::Datasources::Memcache' do
 
     context 'when the requested key exists' do
       it 'should return the value of the requested key' do
-        Excursion::Specs::Fixtures::Datasources::POOL.each do |key,val|
+        Excursion::Specs::Fixtures::Datastores::POOL.each do |key,val|
           expect(subject.read(key)).to eql(val)
         end
       end
@@ -61,7 +61,7 @@ describe 'Excursion::Datasources::Memcache' do
   describe '#write' do
     subject do
       fill_pool 'localhost:11211'
-      Excursion::Datasources::Memcache.new 'localhost:11211'
+      Excursion::Datastores::Memcache.new 'localhost:11211'
     end
     
     describe 'key' do
@@ -99,7 +99,7 @@ describe 'Excursion::Datasources::Memcache' do
   context '#delete' do
     subject do
       fill_pool 'localhost:11211'
-      Excursion::Datasources::Memcache.new 'localhost:11211'
+      Excursion::Datastores::Memcache.new 'localhost:11211'
     end
     
     describe 'key' do

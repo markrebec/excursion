@@ -1,7 +1,7 @@
 module Excursion
   module Specs
     module Fixtures
-      module Datasources
+      module Datastores
         POOL = {
           'key1' => 'value_one',
           'key2' => 'value_two',

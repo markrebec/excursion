@@ -1,6 +1,6 @@
 module Excursion
-  module Datasources
-    class Datasource
+  module Datastores
+    class Datastore
       
       def read(key); end
       alias_method :get, :read

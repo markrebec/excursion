@@ -1,10 +1,10 @@
 require 'dalli'
-require 'excursion/datasources/datasource'
+require 'excursion/datastores/datastore'
 require 'excursion/exceptions/memcache'
 
 module Excursion
-  module Datasources
-    class Memcache < Datasource
+  module Datastores
+    class Memcache < Datastore
 
       def read(key)
         @client.get(key.to_s)
@@ -31,7 +31,7 @@ module Excursion
 
       def initialize(server=nil)
         server ||= Excursion.configuration.memcache_server
-        raise MemcacheConfigurationError, "You must configure the :memcache datasource with a memcache_server" if server.nil?
+        raise MemcacheConfigurationError, "You must configure the :memcache datastore with a memcache_server" if server.nil?
         @client = Dalli::Client.new(server, {namespace: "excursion"})
       end
 

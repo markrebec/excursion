@@ -70,20 +70,20 @@ Excursion.configure do |config|
   config.default_url_options = {host: 'www.example.com', port: 80}
 
 
-  # You'll need to configure the datasource you'll be using for the
+  # You'll need to configure the datastore you'll be using for the
   # route pool if you want to contribute to the pool or use it as
   # a client.
   #
   # Right now the two supported types are a yaml :file or :memcache, but 
-  # datasources are planned for :redis and :active_record as well.
+  # datastores are planned for :redis and :active_record as well.
 
   # Example using a shared file
-  config.datasource = :file
-  config.datasource_file = '/path/to/shared/file'
+  config.datastore = :file
+  config.datastore_file = '/path/to/shared/file'
 
   # Example using memcache
   # This requires the `dalli` gem!
-  config.datasource = :memcache
+  config.datastore = :memcache
   config.memcache_server = 'localhost:11211'
 end
 ```

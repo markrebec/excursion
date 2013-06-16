@@ -1,29 +1,29 @@
 require 'spec_helper'
-require 'excursion/datasources/file'
+require 'excursion/datastores/file'
 
-describe 'Excursion::Datasources::File' do
+describe 'Excursion::Datastores::File' do
 
   def fill_pool(file)
     File.open(file, 'w') do |f|
-      f.write(Excursion::Specs::Fixtures::Datasources::POOL.to_yaml)
+      f.write(Excursion::Specs::Fixtures::Datastores::POOL.to_yaml)
     end
   end
 
   context 'Initialization' do
     # TODO File should not depend on excursion configuration, we should be passing in the configured file path on init
     # rework these specs to represent that, then make the changes
-    #before(:each) { Excursion.configure { |c| c.datasource_file = Dir.pwd } }
+    #before(:each) { Excursion.configure { |c| c.datastore_file = Dir.pwd } }
     
     it 'should require a path' do
-      expect { Excursion::Datasources::File.new }.to raise_exception(Excursion::DatasourceConfigurationError)
-      expect { Excursion::Datasources::File.new Dir.pwd }.to_not raise_exception
+      expect { Excursion::Datastores::File.new }.to raise_exception(Excursion::DatastoreConfigurationError)
+      expect { Excursion::Datastores::File.new Dir.pwd }.to_not raise_exception
     end
   end
 
   describe '#read' do
     subject do
       fill_pool File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
-      Excursion::Datasources::File.new File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
+      Excursion::Datastores::File.new File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
     end
 
     describe 'key' do
@@ -50,7 +50,7 @@ describe 'Excursion::Datasources::File' do
 
     context 'when the requested key exists' do
       it 'should return the value of the requested key' do
-        Excursion::Specs::Fixtures::Datasources::POOL.each do |key,val|
+        Excursion::Specs::Fixtures::Datastores::POOL.each do |key,val|
           expect(subject.read(key)).to eql(val)
         end
       end
@@ -60,7 +60,7 @@ describe 'Excursion::Datasources::File' do
   describe '#write' do
     subject do
       fill_pool File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
-      Excursion::Datasources::File.new File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
+      Excursion::Datastores::File.new File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
     end
     
     describe 'key' do
@@ -98,7 +98,7 @@ describe 'Excursion::Datasources::File' do
   context '#delete' do
     subject do
       fill_pool File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
-      Excursion::Datasources::File.new File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
+      Excursion::Datastores::File.new File.expand_path("../../../dummy/tmp/spec_pool.yml", __FILE__)
     end
     
     describe 'key' do
