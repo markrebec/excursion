@@ -9,7 +9,7 @@ describe 'Excursion::Datastores::File' do
 
   def fill_pool
     File.open(dummy_pool, 'w') do |f|
-      f.write(Excursion::Specs::Fixtures::Datastores::POOL.to_yaml)
+      f.write(Excursion::Specs::Datastores::Mocks::SIMPLE_POOL.to_yaml)
     end
   end
   
@@ -19,7 +19,7 @@ describe 'Excursion::Datastores::File' do
   end
 
 
-  context 'Initialization' do
+  describe '::new' do
     it 'should require a path' do
       expect { Excursion::Datastores::File.new }.to raise_exception(ArgumentError)
       expect { Excursion::Datastores::File.new nil }.to raise_exception(Excursion::DatastoreConfigurationError)
@@ -52,7 +52,7 @@ describe 'Excursion::Datastores::File' do
 
     context 'when the requested key exists' do
       it 'should return the value of the requested key' do
-        Excursion::Specs::Fixtures::Datastores::POOL.each do |key,val|
+        Excursion::Specs::Datastores::Mocks::SIMPLE_POOL.each do |key,val|
           expect(subject.read(key)).to eql(val)
         end
       end

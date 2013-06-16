@@ -15,9 +15,9 @@ module Excursion
 
     def self.register_application(app)
       name = app.class.name.underscore.split("/").first
-      config = {name: name, default_url_options: Excursion.configuration.default_url_options}
+      config = {default_url_options: Excursion.configuration.default_url_options}
       
-      @@applications[name] = Application.new(config, app.routes.named_routes)
+      @@applications[name] = Application.new(name, config, app.routes.named_routes)
       datastore.set(name, @@applications[name].to_cache)
     end
 

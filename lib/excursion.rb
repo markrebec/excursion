@@ -11,6 +11,14 @@ module Excursion
   def self.configuration
     @@configuration
   end
+  
+  def self.rails3?
+    Rails::VERSION::MAJOR == 3
+  end
+  
+  def self.rails4?
+    Rails::VERSION::MAJOR == 4
+  end
 end
 
 require 'excursion/pool'

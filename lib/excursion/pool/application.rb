@@ -4,7 +4,7 @@ module Excursion
       attr_reader :name, :default_url_options
 
       def self.from_cache(cached)
-        new.from_cache(cached)
+        new(cached[:name], cached)
       end
 
       def route(key)
@@ -16,6 +16,8 @@ module Excursion
       end
 
       def routes=(routes)
+        return @routes = routes if routes.is_a?(ActionDispatch::Routing::RouteSet::NamedRouteCollection)
+        raise ArgumentError, 'routes must be a Hash or NamedRouteCollection' unless routes.is_a?(Hash)
         @routes = ActionDispatch::Routing::RouteSet::NamedRouteCollection.new
         routes.each do |name, route|
           @routes.add(name, route)
@@ -24,38 +26,64 @@ module Excursion
 
       def set_routes(routes)
         self.routes = routes
-        self
       end
 
       def to_cache
-        {name: @name,
-         routes: Hash[routes.map { |name, route| [name.to_sym, route.path.spec.to_s] }],
-         default_url_options: @default_url_options,
-         registered_at: @registered_at
+        {
+          name: @name,
+          routes: Hash[routes.map { |name, route| [name.to_sym, route.path.spec.to_s] }],
+          default_url_options: @default_url_options,
+          registered_at: @registered_at
         }
+      end
+
+      def from_cache(cached)
+        @routes = routes_from_cache(cached[:routes]) if cached.has_key?(:routes)
+        @default_url_options = cached[:default_url_options]
+        @registered_at = (Time.at(cached[:registered_at]) rescue Time.now)
+      end
+      
+      protected
+
+      def initialize(name, config, routes=nil)
+        @name = name
+        from_cache(config)
+        set_routes(routes) unless routes.nil?
       end
 
       def routes_from_cache(routes)
         collection = ActionDispatch::Routing::RouteSet::NamedRouteCollection.new
         routes.each do |name, path|
-          collection.add(name, ActionDispatch::Journey::Route.new(name, Rails.application, ActionDispatch::Journey::Path::Pattern.new(path), {required_defaults: []}))
+          collection.add(name, journey_route(name, Rails.application, journey_path(path), {required_defaults: []}))
         end
         collection
       end
+      
+      def journey_route(name, app, path, options)
+        journey_route_class.new(name, app, path, options)
+      end
 
-      def from_cache(cached={})
-        @name = cached[:name] # required
-        @routes = routes_from_cache(cached[:routes]) if cached.has_key?(:routes)
-        @default_url_options = cached[:default_url_options]
-        @registered_at = (Time.at(cached[:registered_at]) rescue Time.now)
-        self
+      def journey_route_class
+        if Excursion.rails3?
+          Journey::Route
+        elsif Excursion.rails4?
+          ActionDispatch::Journey::Route
+        end
       end
       
-      protected
-
-      def initialize(config={}, routes={})
-        from_cache(config).set_routes(routes)
+      def journey_path(path)
+        journey_path_class.new(path)
       end
+
+      def journey_path_class
+        if Excursion.rails3?
+          Journey::Path::Pattern
+        elsif Excursion.rails4?
+          ActionDispatch::Journey::Path::Pattern
+        end
+      end
+
+    
     end
   end
 end
