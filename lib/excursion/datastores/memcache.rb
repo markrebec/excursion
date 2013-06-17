@@ -31,7 +31,7 @@ module Excursion
       protected
 
       def initialize(server)
-        raise MemcacheConfigurationError, "Memcache server cannot be nil" if server.nil? || server.empty?
+        raise MemcacheConfigurationError, "Memcache server cannot be nil" if server.nil? || server.to_s.empty?
         @client = Dalli::Client.new(server, {namespace: "excursion"})
       end
 
