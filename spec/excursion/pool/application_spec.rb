@@ -88,7 +88,7 @@ describe 'Excursion::Pool::Application' do
       mock = Excursion::Specs::Mocks::SIMPLE_APP
       subject.from_cache(mock)
       subject.default_url_options.should eql(mock[:default_url_options])
-      subject.instance_variable_get(:@registered_at).should eql(mock[:registered_at])
+      subject.instance_variable_get(:@registered_at).to_i.should eql(mock[:registered_at].to_i)
       subject.routes.each do |name,path|
         mock[:routes].keys.should include(name)
       end
