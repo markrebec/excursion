@@ -56,7 +56,7 @@ describe 'Excursion::Pool' do
   end
 
   describe '::register_application' do
-    cleaner = Proc.new do
+    before(:each) do
       Excursion::Pool.class_variable_set(:@@applications, {})
       File.unlink(Excursion::Specs::DUMMY_POOL_FILE) if File.exists?(Excursion::Specs::DUMMY_POOL_FILE)
       Excursion.configure do |config|
@@ -64,8 +64,16 @@ describe 'Excursion::Pool' do
         config.datastore_file = Excursion::Specs::DUMMY_POOL_FILE
       end
     end
-    before :each, &cleaner
-    after :each, &cleaner
+    
+    after(:each) do
+      Excursion::Pool.class_variable_set(:@@applications, {})
+      File.unlink(Excursion::Specs::DUMMY_POOL_FILE) if File.exists?(Excursion::Specs::DUMMY_POOL_FILE)
+      Excursion.configure do |config|
+        config.datastore = nil
+        config.datastore_file = nil
+        config.memcache_server = nil
+      end
+    end
 
     it 'should require a rails application as the only argument' do
       expect { Excursion::Pool.register_application }.to raise_exception(ArgumentError)
@@ -90,7 +98,7 @@ describe 'Excursion::Pool' do
   end
 
   describe '::remove_application' do
-    cleaner = Proc.new do
+    before(:each) do
       Excursion::Pool.class_variable_set(:@@applications, {})
       File.unlink(Excursion::Specs::DUMMY_POOL_FILE) if File.exists?(Excursion::Specs::DUMMY_POOL_FILE)
       Excursion.configure do |config|
@@ -98,8 +106,16 @@ describe 'Excursion::Pool' do
         config.datastore_file = Excursion::Specs::DUMMY_POOL_FILE
       end
     end
-    before :each, &cleaner
-    after :each, &cleaner
+    
+    after(:each) do
+      Excursion::Pool.class_variable_set(:@@applications, {})
+      File.unlink(Excursion::Specs::DUMMY_POOL_FILE) if File.exists?(Excursion::Specs::DUMMY_POOL_FILE)
+      Excursion.configure do |config|
+        config.datastore = nil
+        config.datastore_file = nil
+        config.memcache_server = nil
+      end
+    end
     
     it 'should require a rails application as the only argument' do
       expect { Excursion::Pool.remove_application }.to raise_exception(ArgumentError)
@@ -128,7 +144,7 @@ describe 'Excursion::Pool' do
   end
 
   describe '::application' do
-    cleaner = Proc.new do
+    before(:each) do
       Excursion::Pool.class_variable_set(:@@applications, {})
       File.unlink(Excursion::Specs::DUMMY_POOL_FILE) if File.exists?(Excursion::Specs::DUMMY_POOL_FILE)
       Excursion.configure do |config|
@@ -136,8 +152,16 @@ describe 'Excursion::Pool' do
         config.datastore_file = Excursion::Specs::DUMMY_POOL_FILE
       end
     end
-    before :each, &cleaner
-    after :each, &cleaner
+    
+    after(:each) do
+      Excursion::Pool.class_variable_set(:@@applications, {})
+      File.unlink(Excursion::Specs::DUMMY_POOL_FILE) if File.exists?(Excursion::Specs::DUMMY_POOL_FILE)
+      Excursion.configure do |config|
+        config.datastore = nil
+        config.datastore_file = nil
+        config.memcache_server = nil
+      end
+    end
     
     it 'should require an application name string' do
       expect { Excursion::Pool.application }.to raise_exception(ArgumentError)

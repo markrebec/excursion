@@ -55,4 +55,9 @@ Dummy::Application.routes.draw do
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id))(.:format)'
+
+  root :to => 'application#index'
+
+  get 'test' => 'test#index'
+  get 'test/with/:replace' => 'test#replace', :as => :test_with_replace
 end

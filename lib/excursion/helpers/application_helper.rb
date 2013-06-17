@@ -20,6 +20,8 @@ module Excursion
         end
       end
 
+      protected
+
       def app_exists?(app_name)
         !excursion_app(app_name).nil?
       end
