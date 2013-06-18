@@ -7,6 +7,8 @@ module Excursion
       
       def read(key)
         @model.find_by(key: key).value
+      rescue
+        nil
       end
       alias_method :get, :read
       
