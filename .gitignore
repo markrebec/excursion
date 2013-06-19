@@ -18,3 +18,6 @@ Gemfile.lock
 
 ## RSpec flags (they're a personal preference)
 .rspec
+
+## built gems
+*.gem
