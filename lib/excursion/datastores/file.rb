@@ -47,6 +47,7 @@ module Excursion
 
       def write_file(results)
         FileUtils.mkpath(::File.dirname(@path))
+        FileUtils.touch @path unless exists?
         ::File.open(@path, 'w') { |f| f.write(results.to_yaml)}
       rescue
         raise DatastoreConfigurationError, "Could not write to the excursion route pool file: #{@path}"
