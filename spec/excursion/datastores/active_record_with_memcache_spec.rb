@@ -100,7 +100,8 @@ describe 'Excursion::Datastores::ActiveRecordWithMemcache' do
     
     it 'should add the key to the active record table and set the value' do
       subject.write('test_key', 'testval')
-      Excursion::RoutePool.find_by(key: 'test_key').value.should eql('testval')
+      Excursion::RoutePool.find_by(key: 'test_key').value.should eql('testval') if Excursion.rails4?
+      Excursion::RoutePool.find_by_key('test_key').value.should eql('testval') if Excursion.rails3?
     end
 
     it 'should add the key to the cache and set the value' do
@@ -131,9 +132,11 @@ describe 'Excursion::Datastores::ActiveRecordWithMemcache' do
     end
     
     it 'should remove the key from the active record table' do
-      Excursion::RoutePool.find_by(key: 'key1').should_not be_nil
+      Excursion::RoutePool.find_by(key: 'key1').should_not be_nil if Excursion.rails4?
+      Excursion::RoutePool.find_by_key('key1').should_not be_nil if Excursion.rails3?
       subject.delete('key1')
-      Excursion::RoutePool.find_by(key: 'key1').should be_nil
+      Excursion::RoutePool.find_by(key: 'key1').should be_nil if Excursion.rails4?
+      Excursion::RoutePool.find_by_key('key1').should be_nil if Excursion.rails3?
     end
 
     it 'should remove the key from the cache if it exists' do
