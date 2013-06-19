@@ -78,16 +78,35 @@ Excursion.configure do |config|
   # route pool if you want to contribute to the pool or use it as
   # a client.
   #
-  # Right now the two supported types are a yaml :file or :memcache, but 
-  # datastores are planned for :redis and :active_record as well.
-
-  # Example using a shared file
+  # Right now the supported types are:
+  #   :file - Uses a shared YAML file. Useful for dev environments.
+  #   :memcache - Uses a configured memcached server.
+  #   :active_record - Uses an ActiveRecord model and a table in your database.
+  #   :active_record_with_memcache - Uses the :active_record datastore with the :memcache datastore layered on top.
+  
+  # Shared File
   config.datastore = :file
   config.datastore_file = '/path/to/shared/file'
 
-  # Example using memcache
-  # This requires the `dalli` gem!
+  # Memcache
+  #
+  # Requires the `dalli` gem
   config.datastore = :memcache
+  config.memcache_server = 'localhost:11211'
+
+  # ActiveRecord
+  #
+  # You must run `rails generate excursion:active_record` and `rake db:migrate`
+  # in order to generate and run the migration to enable the :active_record datastore.
+  config.datastore = :active_record
+
+  # ActiveRecord with Memcache
+  #
+  # You must run `rails generate excursion:active_record` and `rake db:migrate`
+  # in order to generate and run the migration to enable the :active_record datastore.
+  #
+  # Requires the `dalli` gem
+  config.datastore = :active_record_with_memcache
   config.memcache_server = 'localhost:11211'
 end
 ```

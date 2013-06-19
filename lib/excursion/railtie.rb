@@ -1,7 +1,7 @@
 module Excursion
   class Railtie < Rails::Railtie
     config.after_initialize do |app|
-      unless Excursion.configuration.register_app == false
+      if Excursion.configuration.register_app == true && !Excursion.configuration.datastore.nil? && !defined?(Rails::Generators::Base) # HACK is there a better way to attempt to check if we're running a generator?
         app.reload_routes!
         Excursion::Pool.register_application(app)
       end

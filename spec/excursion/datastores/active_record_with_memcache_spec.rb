@@ -1,32 +1,28 @@
 require 'spec_helper'
-require 'excursion/datastores/memcache'
+require 'excursion/datastores/active_record_with_memcache'
 
-describe 'Excursion::Datastores::Memcache' do
+describe 'Excursion::Datastores::ActiveRecordWithMemcache' do
+  
+  def dalli_client
+    @dalli_client ||= Dalli::Client.new dummy_pool, {namespace: 'excursion'}
+  end
 
   def dummy_pool
     Excursion::Specs::DUMMY_MEMCACHE_SERVER
   end
 
   def fill_pool
-    dc = Dalli::Client.new dummy_pool, {namespace: 'excursion'}
-    dc.flush_all
+    Excursion::RoutePool.all.each { |m| m.destroy }
+    dalli_client.flush_all
     Excursion::Specs::Mocks::SIMPLE_VALUES.each do |key,val|
-      dc.set(key,val)
+      dalli_client.set(key, val)
+      Excursion::RoutePool.create key: key, value: val
     end
   end
   
   subject do
     fill_pool
-    Excursion::Datastores::Memcache.new dummy_pool
-  end
-
-
-  describe '::new' do
-    it 'should require a server' do
-      expect { Excursion::Datastores::Memcache.new }.to raise_exception(ArgumentError)
-      expect { Excursion::Datastores::Memcache.new nil }.to raise_exception(Excursion::MemcacheConfigurationError)
-      expect { Excursion::Datastores::Memcache.new dummy_pool }.to_not raise_exception
-    end
+    Excursion::Datastores::ActiveRecordWithMemcache.new dummy_pool
   end
 
   describe '#read' do
@@ -53,9 +49,22 @@ describe 'Excursion::Datastores::Memcache' do
     end
 
     context 'when the requested key exists' do
-      it 'should return the value of the requested key' do
-        Excursion::Specs::Mocks::SIMPLE_VALUES.each do |key,val|
-          expect(subject.read(key)).to eql(val)
+      context 'in the cache' do
+        it 'should return the value of the requested key' do
+          Excursion::Specs::Mocks::SIMPLE_VALUES.each do |key,val|
+            expect(dalli_client.get(key)).to eql(val)
+            expect(subject.read(key)).to eql(val)
+          end
+        end
+      end
+
+      context 'in the database' do
+        it 'should return the value of the requested key' do
+          Excursion::Specs::Mocks::SIMPLE_VALUES.each do |key,val|
+            dalli_client.delete(key)
+            expect(dalli_client.get(key)).to be_nil
+            expect(subject.read(key)).to eql(val)
+          end
         end
       end
     end
@@ -85,8 +94,18 @@ describe 'Excursion::Datastores::Memcache' do
     end
 
     it 'should add the key to the datastore and set the value' do
-        subject.write('test_key', 'testval')
-        subject.read('test_key').should == 'testval'
+      subject.write('test_key', 'testval')
+      subject.read('test_key').should == 'testval'
+    end
+    
+    it 'should add the key to the active record table and set the value' do
+      subject.write('test_key', 'testval')
+      Excursion::RoutePool.find_by(key: 'test_key').value.should eql('testval')
+    end
+
+    it 'should add the key to the cache and set the value' do
+      subject.write('test_key', 'testval')
+      dalli_client.get('test_key').should eql('testval')
     end
 
     it 'should return the value of the added key' do
@@ -95,6 +114,10 @@ describe 'Excursion::Datastores::Memcache' do
   end
 
   context '#delete' do
+    before(:each) do
+      fill_pool
+    end
+
     describe 'key' do
       it 'should be required' do
         expect { subject.delete }.to raise_exception(ArgumentError)
@@ -105,6 +128,18 @@ describe 'Excursion::Datastores::Memcache' do
       subject.read('key1').should_not eql(nil)
       subject.delete('key1')
       subject.read('key1').should be(nil)
+    end
+    
+    it 'should remove the key from the active record table' do
+      Excursion::RoutePool.find_by(key: 'key1').should_not be_nil
+      subject.delete('key1')
+      Excursion::RoutePool.find_by(key: 'key1').should be_nil
+    end
+
+    it 'should remove the key from the cache if it exists' do
+      dalli_client.get('key1').should_not be_nil
+      subject.delete('key1')
+      dalli_client.get('key1').should be_nil
     end
 
     it 'should return the value of the deleted key if it exists' do
