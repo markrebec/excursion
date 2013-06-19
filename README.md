@@ -1,5 +1,7 @@
 # Excursion
 
+[![Build Status](https://travis-ci.org/markrebec/excursion.png)](https://travis-ci.org/markrebec/excursion)
+
 Excursion provides a pool of routes into which applications can dump their host information and a basic representation of their routing table. Other applications configured to use the same pool can utilize namespaced url helpers for redirecting, drawing links, etc. between apps. This is extremely useful when multiple applications are sharing a database or, for example, are powered by a shared [rails engine](http://edgeapi.rubyonrails.org/classes/Rails/Engine.html). 
 
 Lets say you have a standalone admin or CMS application to manage your content, users and other internal concerns running separately from your user-facing frontend application. Or maybe you also have discussion forums, or a knowledge base or help center, all running as a standalone rails applications. These apps would be sharing a database, and would likely be sharing models, authentication and other functionality via gems or a rails engine. 
