@@ -1,6 +1,7 @@
 0.0.6:
 * Added two new datastores - :active_record and :active_record_with_memcache
 * Added a model and generator for the migration to support the new active record datastores
+* Initial support for Rails 3 - the major caveat right now is that :format is not supported at all (and is stripped entirely from the generated url)
 
 0.0.5:
 * BREAKING CHANGE: Renamed datasources -> datastores. Didn't think it was worth adding transitional config vars since I'm the only one using this right now.
