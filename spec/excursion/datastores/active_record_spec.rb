@@ -1,32 +1,18 @@
 require 'spec_helper'
-require 'excursion/datastores/memcache'
+require 'excursion/datastores/active_record'
 
-describe 'Excursion::Datastores::Memcache' do
-
-  def dummy_pool
-    Excursion::Specs::DUMMY_MEMCACHE_SERVER
-  end
+describe 'Excursion::Datastores::ActiveRecord' do
 
   def fill_pool
-    dc = Dalli::Client.new dummy_pool, {namespace: 'excursion'}
-    dc.flush_all
+    Excursion::RoutePool.all.each { |m| m.destroy }
     Excursion::Specs::Mocks::SIMPLE_VALUES.each do |key,val|
-      dc.set(key,val)
+      Excursion::RoutePool.create key: key, value: val
     end
   end
   
   subject do
     fill_pool
-    Excursion::Datastores::Memcache.new dummy_pool
-  end
-
-
-  describe '::new' do
-    it 'should require a server' do
-      expect { Excursion::Datastores::Memcache.new }.to raise_exception(ArgumentError)
-      expect { Excursion::Datastores::Memcache.new nil }.to raise_exception(Excursion::MemcacheConfigurationError)
-      expect { Excursion::Datastores::Memcache.new dummy_pool }.to_not raise_exception
-    end
+    Excursion::Datastores::ActiveRecord.new
   end
 
   describe '#read' do
