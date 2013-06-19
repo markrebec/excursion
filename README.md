@@ -48,7 +48,18 @@ Excursion is written for Rails, which means you should have a Gemfile and be usi
 
     gem 'excursion'
 
+If you're planning on using the `:memcache` datastore, you must also add the [dalli](https://github.com/mperham/dalli) gem to your Gemfile:
+
+    gem 'dalli'
+
 And run `bundle install` to add it to your bundle.
+
+If you're planning on using the `:active_record` datastore, you must run the following to install and run the necessary migration after you bundle:
+
+    rails generate excursion:active_record
+    rake db:migrate
+
+If you're planning on using the `:active_record_with_memcache` datastore, you must follow the instructions above for both the `:active_record` and `:memcache` datastores.
 
 ## Configuration
 
