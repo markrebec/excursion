@@ -15,11 +15,6 @@ describe 'Excursion::Datastores::ActiveRecord' do
     Excursion::Datastores::ActiveRecord.new
   end
 
-
-  #describe '::new' do
-  #  it 'should optionally accept a memcache server'
-  #end
-
   describe '#read' do
     describe 'key' do
       it 'should be required' do

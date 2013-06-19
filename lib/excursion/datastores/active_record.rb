@@ -33,14 +33,8 @@ module Excursion
 
       protected
 
-      def initialize(memcache_server=nil)
+      def initialize
         @model = Excursion::RoutePool
-        
-        # TODO utilize a caching layer on top of active record if configured
-        #unless memcache_server.nil?
-        #  require 'dalli'
-        #  @cache = Dalli::Client.new(memcache_server, {namespace: "excursion"})
-        #end
       end
     
     end
