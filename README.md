@@ -166,8 +166,11 @@ class AppOne::ExampleClass
     puts app_two.edit_user_url(user)
   end
 end
+```
 
-# Or if you need them in a mailer
+Or if you need them in a mailer:
+
+```ruby
 class MyMailer < ActionMailer::Base
   add_template_helper Excursion::Helpers::ApplicationHelper
 end
