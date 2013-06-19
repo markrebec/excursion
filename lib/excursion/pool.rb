@@ -44,9 +44,11 @@ module Excursion
         @@datastore ||= Excursion::Datastores::Memcache.new(Excursion.configuration.memcache_server)
       when :active_record
         raise TableDoesNotExist, "To use the :active_record datastore you must first run `rails generate excursion:active_record` followed by `rake db:migrate` to create the storage table" unless Excursion::RoutePool.table_exists?
-        args = []
-        args << Excursion.configuration.memcache_server unless Excursion.configuration.memcache_server.nil?
-        @@datastore ||= Excursion::Datastores::ActiveRecord.new(*args)
+        @@datastore ||= Excursion::Datastores::ActiveRecord.new
+      when :active_record_with_memcache
+        raise MemcacheConfigurationError, "You must configure the :active_record_with_memcache datastore with a memcache_server" if Excursion.configuration.memcache_server.nil?
+        raise TableDoesNotExist, "To use the :active_record_with_memcache datastore you must first run `rails generate excursion:active_record` followed by `rake db:migrate` to create the storage table" unless Excursion::RoutePool.table_exists?
+        @@datastore ||= Excursion::Datastores::ActiveRecord.new(Excursion.configuration.memcache_server)
       end
     end
   end
