@@ -4,6 +4,7 @@ require 'excursion/datastores/file'
 describe 'Excursion::Datastores::File' do
 
   def dummy_pool
+    FileUtils.touch Excursion::Specs::DUMMY_POOL_FILE
     Excursion::Specs::DUMMY_POOL_FILE
   end
 

@@ -36,7 +36,7 @@ module Excursion
       end
 
       def exists?
-        ::File.exists(@path)
+        ::File.exists?(@path)
       end
 
       def read_file
@@ -49,7 +49,7 @@ module Excursion
         FileUtils.mkpath(::File.dirname(@path))
         FileUtils.touch @path unless exists?
         ::File.open(@path, 'w') { |f| f.write(results.to_yaml)}
-      rescue
+      rescue StandardError => e
         raise DatastoreConfigurationError, "Could not write to the excursion route pool file: #{@path}"
       end
     end
