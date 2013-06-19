@@ -4,11 +4,11 @@ require 'excursion/datastores/file'
 describe 'Excursion::Datastores::File' do
 
   def dummy_pool
-    FileUtils.touch Excursion::Specs::DUMMY_POOL_FILE
     Excursion::Specs::DUMMY_POOL_FILE
   end
 
   def fill_pool
+    FileUtils.mkpath(::File.dirname(Excursion::Specs::DUMMY_POOL_FILE))
     File.open(dummy_pool, 'w') do |f|
       f.write(Excursion::Specs::Mocks::SIMPLE_VALUES.to_yaml)
     end
