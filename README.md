@@ -18,13 +18,13 @@ With excursion, once an app has registered itself with the route pool, the above
 <%= link_to "user profile", frontend_app.user_url(@user) %>
 ```
 
-The namespaced url helpers work just like rails default helpers, and with excursion's default configuration every time an application initializes it will update it's routing table in the pool, so you don't have to worry about maintaining hardcoded paths in your applications. Of course, if you change the name of the route, you'll still have to update any calls to the namespaced url helper for that route in any apps that use it (just like you would need to update the normal url helpers within the app where you're making that change).
-
 If you want to go the other way, and add a link on your user profile pages to ban the user (only for your admins of course!) using an endpoint in the admin app, it's just as easy:
 
 ```erb
 <%= link_to "ban this user", admin_app.ban_user_url(@user) %>
 ```
+
+The namespaced url helpers work just like rails default helpers, and with excursion's default configuration every time an application initializes it will update it's routing table in the pool, so you don't have to worry about maintaining hardcoded paths in your applications. Of course, if you change the name of the route, you'll still have to update any calls to the namespaced url helper for that route in any apps that use it (just like you would need to update the normal url helpers within the app where you're making that change).
 
 #### Rails 3 Compatibility Note
 
