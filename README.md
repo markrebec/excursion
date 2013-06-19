@@ -1,5 +1,7 @@
 # Excursion
 
+[![Build Status](https://travis-ci.org/markrebec/excursion.png)](https://travis-ci.org/markrebec/excursion)
+
 Provides a pool of routes into which applications can dump their host information and routing table. Other applications configured to use the same pool can utilize namespaced url helpers for redirecting, drawing links, etc. between apps. This is extremely useful when multiple applications are sharing a database and/or are powered by a shared [rails engine](http://edgeapi.rubyonrails.org/classes/Rails/Engine.html). 
 
 For example, you might have an admin or CMS application running separately from your user-facing frontend application. These apps would be sharing a database, and would likely be sharing models and other functionality via a gem or rails engine. If you wanted to add a link to a user's profile endpoint in the frontend app, from the admin edit user screen, you would have to do something like this:
