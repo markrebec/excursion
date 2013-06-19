@@ -1,3 +1,7 @@
+0.0.6:
+* Added two new datastores - :active_record and :active_record_with_memcache
+* Added a model and generator for the migration to support the new active record datastores
+
 0.0.5:
 * BREAKING CHANGE: Renamed datasources -> datastores. Didn't think it was worth adding transitional config vars since I'm the only one using this right now.
 * Adding specs
