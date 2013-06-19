@@ -1,8 +1,10 @@
 # Excursion
 
-Provides a pool of routes into which applications can dump their host information and routing table. Other applications configured to use the same pool can utilize namespaced url helpers for redirecting, drawing links, etc. between apps. This is extremely useful when multiple applications are sharing a database and/or are powered by a shared [rails engine](http://edgeapi.rubyonrails.org/classes/Rails/Engine.html). 
+Excursion provides a pool of routes into which applications can dump their host information and a basic representation of their routing table. Other applications configured to use the same pool can utilize namespaced url helpers for redirecting, drawing links, etc. between apps. This is extremely useful when multiple applications are sharing a database or, for example, are powered by a shared [rails engine](http://edgeapi.rubyonrails.org/classes/Rails/Engine.html). 
 
-For example, you might have an admin or CMS application running separately from your user-facing frontend application. These apps would be sharing a database, and would likely be sharing models and other functionality via a gem or rails engine. If you wanted to add a link to a user's profile endpoint in the frontend app, from the admin edit user screen, you would have to do something like this:
+Lets say you have a standalone admin or CMS application to manage your content, users and other internal concerns running separately from your user-facing frontend application. Or maybe you also have discussion forums, or a knowledge base or help center, all running as a standalone rails applications. These apps would be sharing a database, and would likely be sharing models, authentication and other functionality via gems or a rails engine. 
+
+If you wanted to add a link, from the admin edit user screen, to a user's profile endpoint in the frontend app, you would have to do something like this:
 
 ```erb
 <%= link_to "user profile", "http://frontend_app.example.com/users/#{@user.username}" %>
