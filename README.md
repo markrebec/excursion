@@ -200,13 +200,26 @@ Removes this application and it's routes from the configured route pool.
 
 ### Testing your application
 
-The one catch with excursion is that it can make functional testing in your apps which depend on each others' routes a bit more difficult. The easiest way to work with this at the moment is to configure excursion in your test environment to use a shared `:file` datastore, and pre-populate that by running `rake excursion:register RAILS_ENV=test` from each of your applications prior to running your tests.
+The one catch with excursion is that it can make functional testing in your apps which depend on each others' routes a bit more difficult. I'm looking at ways to configure excursion for a test environment and have it not raise `NoMethodError` when the application or routes don't exist in the pool, but that can still cause functional tests to fail if they rely on or expect those redirects or links being generated properly.
 
-Alternately, you can add some test helpers or support files that will fill the pool with the necessary routes using custom logic before your suite (or even each test if you wanted). To provide an example:
+The easiest way to work with this at the moment is to configure excursion in your test environment to use a shared `:file` datastore that all the apps have access to:
 
-As Part of your checkin/release process for all your apps, you might require dumping routes into a shared pool file, which is then checked in somewhere (maybe to the repo for a gem that all your apps also share). Then, in each of your application's test helpers you can load that file and dump those routes into the configured excursion pool for your test environment.
+```ruby
+Excursion.configure do |config|
+  if Rails.env.test?
+    config.datastore = :file
+    config.datastore_file = '/some/shared/pool'
+  else
+    # other env configs here
+  end
+end
+```
 
-I'm looking at ways to configure excursion for a test environment and have it not raise `NoMethodError` when the application or routes don't exist in the pool, but that would likely still cause application tests to fail if they relied on those redirects or links being generated.
+And pre-populate that test pool by running `rake excursion:register RAILS_ENV=test` from each of your applications prior to running any of their tests.
+
+Alternately, you can add some test helpers or support files that will fill the pool with the necessary routes using your own custom logic before your suite (or even each test if you wanted). To provide an example:
+
+As Part of your checkin/release process for all your apps, you might require dumping routes into a shared pool file, which is then checked in somewhere (maybe into the repo for a gem that all your apps also share). Then, in each of your application's test helpers you can load that file (from wherever you've got it maintained) and dump those routes into the configured excursion pool for your test environment.
 
 ### Contributing
 
