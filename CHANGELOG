@@ -1,3 +1,7 @@
+0.0.7:
+* Refactored url helpers a bit to use our own custom path part replacement (which still doesn't support format) and make uniform calls to the base url_for helper method for all Rails versions
+* Url helpers now accept additional options (like host information) which get merged with the appliaction's default url options stored in the route pool
+
 0.0.6:
 * Added two new datastores - :active_record and :active_record_with_memcache
 * Added a model and generator for the migration to support the new active record datastores
