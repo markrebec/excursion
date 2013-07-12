@@ -20,6 +20,10 @@ module Excursion
         end
       end
 
+      def respond_to_missing?(meth, include_private=false)
+        app_exists?(meth.to_s) || super
+      end
+
       protected
 
       def app_exists?(app_name)
