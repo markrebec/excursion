@@ -48,11 +48,19 @@ module Excursion
         path = route.path.spec.to_s.dup
 
         route.required_parts.zip(args) do |part, arg|
-          path.gsub!(/(\*|:)#{part}/, Journey::Router::Utils.escape_fragment(arg.to_param))
+          path.gsub!(/(\*|:)#{part}/, journey_utils_class.escape_fragment(arg.to_param))
         end
 
         path.gsub!(/\(\.:format\)/, '') # This is really gross, and :format should actually be supported
         path
+      end
+
+      def journey_utils_class
+        if Excursion.rails3?
+          Journey::Router::Utils
+        elsif Excursion.rails4?
+          ActionDispatch::Journey::Router::Utils
+        end
       end
     end
   end
