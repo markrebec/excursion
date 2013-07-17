@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
   s.files       = Dir["lib/**/*"]
   s.test_files  = Dir["spec/**/*"]
   s.homepage    = "http://github.com/markrebec/excursion"
+  s.license     = "MIT"
 
   s.add_dependency "rails", ">= 3.0.0"
 
