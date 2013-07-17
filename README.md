@@ -198,26 +198,26 @@ Removes this application and it's routes from the configured route pool.
 
 ### Testing your application
 
-The one catch with excursion is that it can make functional testing in your apps which depend on each others' routes a bit more difficult. I'm looking at ways to configure excursion for a test environment and have it not raise `NoMethodError` when the application or routes don't exist in the pool, but that can still cause functional tests to fail if they rely on or expect those redirects or links being generated properly.
+The one catch with excursion is that it can make functional testing in your apps which depend on each others' routes a bit more difficult. Initially, when running tests with excursion enabled in your application, you would get swamped with `NoMethodError` errors due to your route pool not being populated in the test environment.
 
-The easiest way to work with this at the moment is to configure excursion in your test environment to use a shared `:file` datastore that all the apps have access to:
+The addition of a `:test` datastore and `DummyApplication` class, which will respond to **any** helper call with a predictable url path (which can be programmed against) regardless of whether the called application/route exists in the pool has helped remedy this.
+
+If you configure your test environment to use the `:test` datastore, you should be able to get your functional tests passing, although there is still one catch: if you do not pre-populate the pool with your routes, the dummy application will respond with predictable dummy url paths as described above.  So, for example, if you were to call `cats_url` and the named route for `cats` is **not** pre-populated into excursion, you'll end up with a URL like `http://www.example.com/app_name/cats' (as opposed to a real world url path like `http://my.appserver.com/cats`).
+
+Below is an example of configuring the `:test` datastore for your test environment in a config initializer. In this case, we're also not registering our app, but you can register it with the pool if you want to test a real world result for any specific excursion url helpers.
 
 ```ruby
 Excursion.configure do |config|
   if Rails.env.test?
-    config.datastore = :file
-    config.datastore_file = '/some/shared/pool'
+    config.datastore = :test
+    config.register_app = false
   else
     # other env configs here
   end
 end
 ```
 
-And pre-populate that test pool by running `rake excursion:register RAILS_ENV=test` from each of your applications prior to running any of their tests.
-
-Alternately, you can add some test helpers or support files that will fill the pool with the necessary routes using your own custom logic before your suite (or even each test if you wanted). To provide an example:
-
-As Part of your checkin/release process for all your apps, you might require dumping routes into a shared pool file, which is then checked in somewhere (maybe into the repo for a gem that all your apps also share). Then, in each of your application's test helpers you can load that file (from wherever you've got it maintained) and dump those routes into the configured excursion pool for your test environment.
+You may also add support code to your test/spec helpers to either register your application(s) or populate your `:test` datastore with a static set of dummy data (maybe imported from a yaml file or some other data source).
 
 ### Contributing
 
