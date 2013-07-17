@@ -1,3 +1,6 @@
+0.0.9:
+* Adding [] and has_key? support methods to the DummyApplication class
+
 0.0.8:
 * Added a DummyApplication object which will respond to non-existent url helper calls with a predicatable dummy route
 * Added a :test datastore that can be used for testing, which responds with a DummyApplication when the requested application does not exist
