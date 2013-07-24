@@ -4,7 +4,7 @@ module Excursion
       attr_reader :name, :default_url_options
 
       def self.from_cache(cached)
-        new(cached[:name], cached)
+        new(cached[:name], cached) unless cached.nil?
       end
 
       def route(key)

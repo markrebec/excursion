@@ -7,10 +7,9 @@ module Excursion
     @@applications = {}
 
     def self.application(name)
-      return @@applications[name] if @@applications.has_key?(name)
+      return @@applications[name] if @@applications.has_key?(name) && !@@applications[name].nil?
       
-      app_yaml = datastore.get(name)
-      @@applications[name] = Application.from_cache(app_yaml) unless app_yaml.nil?
+      @@applications[name] = datastore.app(name)
     end
 
     def self.register_application(app)

@@ -8,7 +8,8 @@ module Excursion
       attr_accessor :pool
 
       def read(key)
-        @pool[key.to_sym] ||= Excursion::Pool::DummyApplication.new(key, {host: 'test.local'}, ActionDispatch::Routing::RouteSet::NamedRouteCollection.new)
+        return unless Excursion.configuration.test_providers.nil? || Excursion.configuration.test_providers.map(&:to_sym).include?(key.to_sym)
+        @pool[key.to_sym] ||= Excursion::Pool::DummyApplication.new(key, {host: 'test.local'}, ActionDispatch::Routing::RouteSet::NamedRouteCollection.new).to_cache
       end
       alias_method :get, :read
       
