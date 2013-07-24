@@ -6,10 +6,14 @@ module Excursion
   module Datastores
     class Test < Datastore
       attr_accessor :pool
+      
+      def app(key)
+        Excursion::Pool::DummyApplication.from_cache(read(key))
+      end
 
       def read(key)
         return unless Excursion.configuration.test_providers.nil? || Excursion.configuration.test_providers.map(&:to_sym).include?(key.to_sym)
-        @pool[key.to_sym] ||= Excursion::Pool::DummyApplication.new(key, {host: 'test.local'}, ActionDispatch::Routing::RouteSet::NamedRouteCollection.new).to_cache
+        @pool[key.to_sym] ||= Excursion::Pool::DummyApplication.new(key, {default_url_options: {host: 'www.example.com'}}, ActionDispatch::Routing::RouteSet::NamedRouteCollection.new).to_cache
       end
       alias_method :get, :read
       

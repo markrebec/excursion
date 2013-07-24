@@ -12,7 +12,7 @@ module Excursion
         if route.nil?
           super
         else
-          url_opts = @application.default_url_options.clone
+          url_opts = (@application.default_url_options || {}).clone
           url_opts.merge!(args.slice!(args.length-1)) if args.last.is_a?(Hash) #&& args.last.has_key?(:host)
             
           ActionDispatch::Http::URL.url_for(url_opts.merge({path: replaced_path(route, args)}))
