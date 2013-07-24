@@ -38,7 +38,7 @@ describe 'Excursion::Datastores::Test' do
 
     context 'when the requested key does not exist' do
       it 'should return a dummy application' do
-        subject.read('non_existent_key').should be_an_instance_of(Excursion::Pool::DummyApplication)
+        subject.read('non_existent_key').should be_an_instance_of(Hash)
       end
     end
 

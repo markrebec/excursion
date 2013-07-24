@@ -20,17 +20,20 @@ describe 'Excursion::Pool' do
 
     it 'should support the :file datastore' do
       Excursion.configuration.datastore = :file
-      expect { Excursion::Pool.datastore }.to_not raise_exception(Excursion::NoDatastoreError)
+      Excursion.configuration.datastore_file = 'tmp/.rout_pool'
+      expect { Excursion::Pool.datastore }.to_not raise_exception#(Excursion::NoDatastoreError)
     end
 
     it 'should support the :memcache datastore' do
       Excursion.configuration.datastore = :memcache
-      expect { Excursion::Pool.datastore }.to_not raise_exception(Excursion::NoDatastoreError)
+      Excursion.configuration.memcache_server = 'localhost:11211'
+      expect { Excursion::Pool.datastore }.to_not raise_exception#(Excursion::NoDatastoreError)
     end
 
     context 'when using the :file datastore' do
       it 'should require the datastore_file option be configured' do
         Excursion.configuration.datastore = :file
+        Excursion.configuration.datastore_file = nil
         expect { Excursion::Pool.datastore }.to raise_exception(Excursion::DatastoreConfigurationError)
       end
 
@@ -44,6 +47,7 @@ describe 'Excursion::Pool' do
     context 'when using the :memcache datastore' do
       it 'should require the memcache_server option be configured' do
         Excursion.configuration.datastore = :memcache
+        Excursion.configuration.memcache_server = nil
         expect { Excursion::Pool.datastore }.to raise_exception(Excursion::MemcacheConfigurationError)
       end
       

@@ -41,7 +41,7 @@ describe 'Excursion::Helpers::ApplicationHelper' do
   end
 
   it 'should allow referencing application helper methods directly by name' do
-    expect { Excursion.url_helpers.dummy }.to_not raise_exception(NoMethodError)
+    expect { Excursion.url_helpers.dummy }.to_not raise_exception#(NoMethodError)
     Excursion.url_helpers.dummy.should eql(Excursion.url_helpers.excursion('dummy'))
   end
 

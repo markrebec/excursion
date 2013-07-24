@@ -30,7 +30,7 @@ describe 'Excursion' do
   context '::url_helpers' do
     it 'should provide access to application url helpers' do
       Excursion::Pool.register_application(Rails.application)
-      expect { Excursion.url_helpers.dummy }.to_not raise_exception(NoMethodError)
+      expect { Excursion.url_helpers.dummy }.to_not raise_exception#(NoMethodError)
     end
   end
 end

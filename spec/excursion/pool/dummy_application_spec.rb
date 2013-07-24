@@ -12,8 +12,8 @@ describe 'Excursion::Pool::DummyApplication' do
     end
 
     it 'should accept an optional route collection' do
-      expect { Excursion::Pool::DummyApplication.new 'app_name', {} }.to_not raise_exception(ArgumentError)
-      expect { Excursion::Pool::DummyApplication.new 'app_name', {}, {} }.to_not raise_exception(ArgumentError)
+      expect { Excursion::Pool::DummyApplication.new 'app_name', {} }.to_not raise_exception#(ArgumentError)
+      expect { Excursion::Pool::DummyApplication.new 'app_name', {}, {} }.to_not raise_exception#(ArgumentError)
     end
 
     it 'should return a populated DummyApplication object' do
@@ -136,11 +136,11 @@ describe 'Excursion::Pool::DummyApplication' do
     subject { Excursion::Pool::DummyApplication.new 'test_app', {} }
     
     it 'should accept a Hash of named routes' do
-      expect { subject.routes = {} }.to_not raise_exception(ArgumentError)
+      expect { subject.routes = {} }.to_not raise_exception#(ArgumentError)
     end
 
     it 'should accept a NamedRouteCollection' do
-      expect { subject.routes = ActionDispatch::Routing::RouteSet::NamedRouteCollection.new }.to_not raise_exception(ArgumentError)
+      expect { subject.routes = ActionDispatch::Routing::RouteSet::NamedRouteCollection.new }.to_not raise_exception#(ArgumentError)
     end
 
     it 'should only accept a Hash or NamedRouteCollection' do
@@ -180,11 +180,11 @@ describe 'Excursion::Pool::DummyApplication' do
       end
       
       it 'should accept a Hash of named routes' do
-        expect { subject.set_routes({}) }.to_not raise_exception(ArgumentError)
+        expect { subject.set_routes({}) }.to_not raise_exception#(ArgumentError)
       end
 
       it 'should accept a NamedRouteCollection' do
-        expect { subject.set_routes ActionDispatch::Routing::RouteSet::NamedRouteCollection.new }.to_not raise_exception(ArgumentError)
+        expect { subject.set_routes ActionDispatch::Routing::RouteSet::NamedRouteCollection.new }.to_not raise_exception#(ArgumentError)
       end
 
       it 'should only accept a Hash or NamedRouteCollection' do

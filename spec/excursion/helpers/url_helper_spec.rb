@@ -28,10 +28,11 @@ describe 'Excursion::Helpers::UrlHelper' do
   end
 
   it 'should provide url helper methods for the application named routes' do
-    expect { Excursion.url_helpers.dummy.root_url }.to_not raise_exception(NoMethodError)
-    expect { Excursion.url_helpers.dummy.root_path }.to_not raise_exception(NoMethodError)
-    expect { Excursion.url_helpers.dummy.test_url }.to_not raise_exception(NoMethodError)
-    expect { Excursion.url_helpers.dummy.test_path }.to_not raise_exception(NoMethodError)
+    url_opts = {host: 'http://www.example.com'}
+    expect { Excursion.url_helpers.dummy.root_url(url_opts) }.to_not raise_exception
+    expect { Excursion.url_helpers.dummy.root_path(url_opts) }.to_not raise_exception
+    expect { Excursion.url_helpers.dummy.test_url(url_opts) }.to_not raise_exception
+    expect { Excursion.url_helpers.dummy.test_path(url_opts) }.to_not raise_exception
   end
 
   context 'url helper methods' do
