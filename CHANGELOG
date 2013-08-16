@@ -4,6 +4,7 @@
 * Adds Excursion::Pool.all_applications to return all registered applications
 * Excursion is now registered as a rails engine to plug into the asset pipeline
 * New (prototype) javascript url helpers to provide access to your application routes in the client with Excursion.application.your_named_url()
+* Helper method render_excursion_javascript_helpers to handle loading the javascript route helpers into your views
 
 0.0.11:
 * Bugfixes for dummy applications not being properly configured and returned in certain test cases
