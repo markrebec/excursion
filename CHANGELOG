@@ -1,3 +1,8 @@
+0.0.12:
+* Adds #all and #all_apps methods to datastores to fetch all registered keys/applications
+* Tracks an index of registered keys for the memcache datastore (to enable the new #all methods)
+* Adds Excursion::Pool.all_applications to return all registered applications
+
 0.0.11:
 * Bugfixes for dummy applications not being properly configured and returned in certain test cases
 
