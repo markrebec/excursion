@@ -1,5 +1,6 @@
 require 'excursion/helpers/url_helper'
 require 'excursion/helpers/application_helper'
+require 'excursion/helpers/javascript_helper'
 
 module Excursion
   module Helpers
