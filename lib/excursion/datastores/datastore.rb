@@ -13,6 +13,7 @@ module Excursion
       alias_method :set, :write
       def delete(key); end
       alias_method :unset, :delete
+      def all; end
 
     end
   end

@@ -36,6 +36,12 @@ module Excursion
       end
       alias_method :unset, :delete
 
+      def all
+        hash = HashWithIndifferentAccess.new
+        @model.all.each { |m| hash[m.key.to_sym] = m.value }
+        hash
+      end
+
       protected
 
       def initialize

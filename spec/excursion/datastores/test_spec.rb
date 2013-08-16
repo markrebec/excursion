@@ -85,27 +85,38 @@ describe 'Excursion::Datastores::Test' do
     end
   end
 
-  context '#delete' do
+  describe '#delete' do
     describe 'key' do
       it 'should be required' do
         expect { subject.delete }.to raise_exception(ArgumentError)
       end
     end
     
-    it 'should remove the key from the datastore' do
-      subject.write('key1', Excursion::Specs::Mocks::SIMPLE_VALUES['key1'])
-      subject.read('key1').should eql(Excursion::Specs::Mocks::SIMPLE_VALUES['key1'])
-      subject.delete('key1')
-      subject.read('key1').should_not eql(Excursion::Specs::Mocks::SIMPLE_VALUES['key1'])
+    context 'when the key exists' do
+      it 'should remove the key from the datastore' do
+        subject.write('key1', Excursion::Specs::Mocks::SIMPLE_VALUES['key1'])
+        subject.read('key1').should eql(Excursion::Specs::Mocks::SIMPLE_VALUES['key1'])
+        subject.delete('key1')
+        subject.read('key1').should_not eql(Excursion::Specs::Mocks::SIMPLE_VALUES['key1'])
+      end
+
+      it 'should return the value of the deleted' do
+        keyval = subject.read('key1')
+        subject.delete('key1').should eql(keyval)
+      end
     end
 
-    it 'should return the value of the deleted key if it exists' do
-      keyval = subject.read('key1')
-      subject.delete('key1').should eql(keyval)
+    context 'when the key does not exist' do
+      it 'should return nil' do
+        subject.delete('non_existent_key').should eql(nil)
+      end
     end
-
-    it 'should return nil if the deleted key does not exist' do
-      subject.delete('non_existent_key').should eql(nil)
+  end
+  
+  describe '#all' do
+    it 'should return a hash of all the registered keys and their values' do
+      Excursion::Specs::Mocks::SIMPLE_VALUES.each { |k,v| subject.write(k.to_sym, v) }
+      Excursion::Specs::Mocks::SIMPLE_VALUES.each { |k,v| expect(subject.all[k.to_sym]).to eql(v) }
     end
   end
 

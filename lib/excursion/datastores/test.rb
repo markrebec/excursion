@@ -27,6 +27,10 @@ module Excursion
       end
       alias_method :unset, :delete
 
+      def all
+        HashWithIndifferentAccess.new(@pool)
+      end
+
       protected
 
       def initialize(pool=nil)

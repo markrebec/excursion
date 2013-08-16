@@ -5,6 +5,7 @@ require 'excursion/exceptions/memcache'
 module Excursion
   module Datastores
     class Memcache < Datastore
+      REGISTERED_KEYS = 'registered_keys'
 
       def read(key)
         @client.get(key.to_s)
@@ -14,25 +15,41 @@ module Excursion
       alias_method :get, :read
 
       def write(key, value)
-        value if @client.set(key.to_s, value)
+        value if @client.set(key.to_s, value) && @client.set(REGISTERED_KEYS, (registered_keys << key.to_s).join(','))
       rescue Dalli::RingError => e
         rescue_from_dalli_ring_error(e) && retry
       end
       alias_method :set, :write
 
       def delete(key)
-        value = @client.get(key)
-        value if @client.delete(key)
+        regd_keys = registered_keys
+        regd_keys.delete(key.to_s)
+        value = @client.get(key.to_s)
+        value if @client.delete(key.to_s) && @client.set(REGISTERED_KEYS, regd_keys.join(','))
       rescue Dalli::RingError => e
         rescue_from_dalli_ring_error(e) && retry
       end
       alias_method :unset, :delete
+
+      def all
+        hash = HashWithIndifferentAccess.new
+        registered_keys.each { |key| hash[key.to_s] = @client.get(key.to_s) }
+        hash
+      rescue Dalli::RingError => e
+        rescue_from_dalli_ring_error(e) && retry
+      end
 
       protected
 
       def initialize(server)
         raise MemcacheConfigurationError, "Memcache server cannot be nil" if server.nil? || server.to_s.empty?
         @client = Dalli::Client.new(server, {namespace: "excursion"})
+      end
+
+      def registered_keys
+        @client.get(REGISTERED_KEYS).split(',')
+      rescue
+        []
       end
 
       # TODO if we're using memcache, and the server goes away, it might be a good idea

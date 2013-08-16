@@ -28,6 +28,14 @@ module Excursion
       end
       alias_method :unset, :delete
 
+      def all
+        hash = @cache.all
+        return hash unless hash.nil? || hash.empty?
+        @model.all
+      rescue Dalli::RingError => e
+        rescue_from_dalli_ring_error(e) && retry
+      end
+
       protected
 
       def initialize(server)

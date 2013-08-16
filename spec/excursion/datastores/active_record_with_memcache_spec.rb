@@ -18,6 +18,7 @@ describe 'Excursion::Datastores::ActiveRecordWithMemcache' do
       dalli_client.set(key, val)
       Excursion::RoutePool.create key: key, value: val
     end
+    dalli_client.set(Excursion::Datastores::Memcache::REGISTERED_KEYS, Excursion::Specs::Mocks::SIMPLE_VALUES.keys.map(&:to_s).join(','))
   end
   
   subject do
@@ -114,7 +115,7 @@ describe 'Excursion::Datastores::ActiveRecordWithMemcache' do
     end
   end
 
-  context '#delete' do
+  describe '#delete' do
     before(:each) do
       fill_pool
     end
@@ -152,6 +153,14 @@ describe 'Excursion::Datastores::ActiveRecordWithMemcache' do
 
     it 'should return nil if the deleted key does not exist' do
       subject.delete('non_existent_key').should eql(nil)
+    end
+  end
+  
+  describe '#all' do
+    it 'should return a hash of all the registered keys and their values' do
+      Excursion::Specs::Mocks::SIMPLE_VALUES.each do |k,v|
+        expect(subject.all[k.to_sym]).to eql(v)
+      end
     end
   end
 

@@ -26,6 +26,10 @@ module Excursion
       end
       alias_method :unset, :delete
 
+      def all
+        HashWithIndifferentAccess.new(read_file)
+      end
+
       protected
 
       def initialize(path)
