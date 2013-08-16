@@ -10,6 +10,13 @@ module Excursion
       def app(key)
         Excursion::Pool::DummyApplication.from_cache(read(key))
       end
+      
+      def all_apps
+        app_hash = HashWithIndifferentAccess.new
+        all.each do |k,v|
+          app_hash[k.to_sym] = Excursion::Pool::DummyApplication.from_cache(v)
+        end
+      end
 
       def read(key)
         return unless Excursion.configuration.test_providers.nil? || Excursion.configuration.test_providers.map(&:to_sym).include?(key.to_sym)

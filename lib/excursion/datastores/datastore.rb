@@ -7,6 +7,13 @@ module Excursion
         Excursion::Pool::Application.from_cache(read(key))
       end
       
+      def all_apps
+        app_hash = HashWithIndifferentAccess.new
+        all.each do |k,v|
+          app_hash[k.to_sym] = Excursion::Pool::Application.from_cache(v)
+        end
+      end
+      
       def read(key); end
       alias_method :get, :read
       def write(key, value); end

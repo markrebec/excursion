@@ -6,6 +6,10 @@ module Excursion
   module Pool
     @@applications = {}
 
+    def self.all_applications
+      datastore.all_apps
+    end
+
     def self.application(name)
       return @@applications[name] if @@applications.has_key?(name) && !@@applications[name].nil?
       
