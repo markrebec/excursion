@@ -1,4 +1,5 @@
 0.0.12:
+* Adds support for _path helpers
 * Adds #all and #all_apps methods to datastores to fetch all registered keys/applications
 * Tracks an index of registered keys for the memcache datastore (to enable the new #all methods)
 * Adds Excursion::Pool.all_applications to return all registered applications
