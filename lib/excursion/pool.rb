@@ -23,7 +23,21 @@ module Excursion
       config = {default_url_options: Excursion.configuration.default_url_options}
       
       @@applications[name] = Application.new(name, config, app.routes.named_routes)
+      
+      if block_given?
+        # eval block in context of a Excursion::Pool::DSL class with the application
+      end
+      
       datastore.set(name, @@applications[name].to_cache)
+    end
+
+    def self.register_hash(app_hash)
+      raise ArgumentError, "you must provide at minimum a hash with a :name key" unless app_hash.is_a?(Hash) && app_hash.has_key?(:name)
+      app_hash = {default_url_options: Excursion.configuration.default_url_options, routes: {}, registered_at: Time.now}.merge(app_hash)
+      name = app_hash[:name]
+
+      datastore.set(name, app_hash)
+      @@applications[name] = datastore.app(name)
     end
 
     def self.remove_application(app)

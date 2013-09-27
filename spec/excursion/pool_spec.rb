@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe 'Excursion::Pool' do
+  DUMMY_HASH = {name: 'dummy', default_url_options: {host: 'dummy.local', port: 3000}, routes: {root: '/', other_route: '/other/route'}}
 
   describe '::datastore' do
     cleaner = Proc.new do
@@ -58,7 +59,7 @@ describe 'Excursion::Pool' do
       end
     end
   end
-
+  
   describe '::register_application' do
     before(:each) do
       Excursion::Pool.class_variable_set(:@@applications, {})
@@ -97,6 +98,47 @@ describe 'Excursion::Pool' do
     it 'should set the application in the datastore pool' do
       Excursion::Pool.datastore.get('dummy').should be_nil
       Excursion::Pool.register_application(Rails.application) # Use the dummy app class
+      Excursion::Pool.datastore.get('dummy').should_not be_nil
+    end
+  end
+
+  describe '::register_hash' do
+    before(:each) do
+      Excursion::Pool.class_variable_set(:@@applications, {})
+      File.unlink(Excursion::Specs::DUMMY_POOL_FILE) if File.exists?(Excursion::Specs::DUMMY_POOL_FILE)
+      Excursion.configure do |config|
+        config.datastore = :file
+        config.datastore_file = Excursion::Specs::DUMMY_POOL_FILE
+      end
+    end
+    
+    after(:each) do
+      Excursion::Pool.class_variable_set(:@@applications, {})
+      File.unlink(Excursion::Specs::DUMMY_POOL_FILE) if File.exists?(Excursion::Specs::DUMMY_POOL_FILE)
+      Excursion.configure do |config|
+        config.datastore = nil
+        config.datastore_file = nil
+        config.memcache_server = nil
+      end
+    end
+
+    it 'should require a hash with a :name key' do
+      expect { Excursion::Pool.register_hash }.to raise_exception(ArgumentError)
+      expect { Excursion::Pool.register_hash {} }.to raise_exception(ArgumentError)
+      expect { Excursion::Pool.register_hash 'string arg' }.to raise_exception(ArgumentError)
+      expect { Excursion::Pool.register_hash 123 }.to raise_exception(ArgumentError)
+      expect { Excursion::Pool.register_hash :symbol_arg }.to raise_exception(ArgumentError)
+    end
+
+    it 'should add the application to the local hash pool' do
+      Excursion::Pool.class_variable_get(:@@applications).should_not have_key('dummy')
+      Excursion::Pool.register_hash(DUMMY_HASH)
+      Excursion::Pool.class_variable_get(:@@applications).should have_key('dummy')
+    end
+
+    it 'should set the application in the datastore pool' do
+      Excursion::Pool.datastore.get('dummy').should be_nil
+      Excursion::Pool.register_hash(DUMMY_HASH)
       Excursion::Pool.datastore.get('dummy').should_not be_nil
     end
   end
