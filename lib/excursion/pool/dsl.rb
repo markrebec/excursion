@@ -5,6 +5,8 @@ module Excursion
       def self.block_eval(app=nil, &block)
         @application = app.is_a?(Excursion::Pool::Application) ? app : Excursion::Pool::Application.new('', {})
         instance_eval &block if block_given?
+
+        raise "You must assign a name to the application" if @application.name.blank?
         @application
       end
 
