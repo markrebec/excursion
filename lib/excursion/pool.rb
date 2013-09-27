@@ -21,7 +21,7 @@ module Excursion
 
     def self.register_application(app=nil, opts={}, &block)
       raise ArgumentError, "app must be an instance of Rails::Application" unless app.is_a?(Rails::Application) || block_given?
-      opts = {cache: true}.merge(opts)
+      opts = {store: true}.merge(opts)
       
       if app.is_a?(Rails::Application)
         name = app.class.name.underscore.split("/").first
@@ -40,7 +40,7 @@ module Excursion
         end
       end
       
-      datastore.set(name, @@applications[name].to_cache) if opts[:cache]
+      datastore.set(name, @@applications[name].to_cache) if opts[:store]
       @@applications[name]
     end
 
