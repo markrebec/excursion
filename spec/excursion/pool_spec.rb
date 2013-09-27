@@ -80,13 +80,16 @@ describe 'Excursion::Pool' do
       end
     end
 
-    it 'should require a rails application as the only argument' do
+    it 'should require a rails application and/or a block' do
       expect { Excursion::Pool.register_application }.to raise_exception(ArgumentError)
       expect { Excursion::Pool.register_application 'string arg' }.to raise_exception(ArgumentError)
       expect { Excursion::Pool.register_application 123 }.to raise_exception(ArgumentError)
       expect { Excursion::Pool.register_application :symbol_arg }.to raise_exception(ArgumentError)
       expect { Excursion::Pool.register_application Object }.to raise_exception(ArgumentError)
       expect { Excursion::Pool.register_application Object.new }.to raise_exception(ArgumentError)
+      expect { Excursion::Pool.register_application Rails.application }.to_not raise_exception
+      expect { Excursion::Pool.register_application do; end }.to_not raise_exception
+      expect { Excursion::Pool.register_application(Rails.application) do; end }.to_not raise_exception
     end
 
     it 'should add the application to the local hash pool' do

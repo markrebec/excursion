@@ -1,4 +1,5 @@
 require 'excursion/pool/application'
+require 'excursion/pool/dsl'
 require 'excursion/exceptions/pool'
 require 'excursion/exceptions/datastores'
 
@@ -7,7 +8,9 @@ module Excursion
     @@applications = {}
 
     def self.all_applications
-      datastore.all_apps
+      datastore.all_apps.each do |app|
+        @@applications[app.name] = app
+      end
     end
 
     def self.application(name)
@@ -16,23 +19,34 @@ module Excursion
       @@applications[name] = datastore.app(name)
     end
 
-    def self.register_application(app)
-      raise ArgumentError, "app must be an instance of Rails::Application" unless app.is_a?(Rails::Application)
+    def self.register_application(app=nil, opts={}, &block)
+      raise ArgumentError, "app must be an instance of Rails::Application" unless app.is_a?(Rails::Application) || block_given?
+      opts = {cache: true}.merge(opts)
       
-      name = app.class.name.underscore.split("/").first
-      config = {default_url_options: Excursion.configuration.default_url_options}
-      
-      @@applications[name] = Application.new(name, config, app.routes.named_routes)
-      
-      if block_given?
-        # eval block in context of a Excursion::Pool::DSL class with the application
+      if app.is_a?(Rails::Application)
+        name = app.class.name.underscore.split("/").first
+        config = {default_url_options: Excursion.configuration.default_url_options}
+        routes = app.routes.named_routes
+        @@applications[name] = Application.new(name, config, routes)
       end
       
-      datastore.set(name, @@applications[name].to_cache)
+      if block_given?
+        if @@applications.has_key?(name)
+          DSL.block_eval(@@applications[name], &block)
+        else
+          block_app = DSL.block_eval(&block)
+          name = block_app.name
+          @@applications[name] = block_app
+        end
+      end
+      
+      datastore.set(name, @@applications[name].to_cache) if opts[:cache]
+      @@applications[name]
     end
 
     def self.register_hash(app_hash)
       raise ArgumentError, "you must provide at minimum a hash with a :name key" unless app_hash.is_a?(Hash) && app_hash.has_key?(:name)
+      
       app_hash = {default_url_options: Excursion.configuration.default_url_options, routes: {}, registered_at: Time.now}.merge(app_hash)
       name = app_hash[:name]
 

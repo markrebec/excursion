@@ -1,7 +1,7 @@
 module Excursion
   module Pool
     class Application
-      attr_reader :name, :default_url_options
+      attr_accessor :name, :default_url_options
 
       def self.from_cache(cached)
         new(cached[:name], cached) unless cached.nil?
@@ -9,6 +9,11 @@ module Excursion
 
       def route(key)
         routes[key.to_sym]
+      end
+
+      def add_route(key, route)
+        route = journey_route(key, Rails.application, journey_path(route), {required_defaults: []}) unless route.is_a?(journey_route_class)
+        routes.add(key.to_sym, route)
       end
 
       def routes
@@ -20,7 +25,8 @@ module Excursion
         raise ArgumentError, 'routes must be a Hash or NamedRouteCollection' unless routes.is_a?(Hash)
         @routes = ActionDispatch::Routing::RouteSet::NamedRouteCollection.new
         routes.each do |name, route|
-          @routes.add(name, route)
+          route = journey_route(name, Rails.application, journey_path(route), {required_defaults: []}) unless route.is_a?(journey_route_class)
+          @routes.add(name.to_sym, route)
         end
       end
 
@@ -54,7 +60,7 @@ module Excursion
       def routes_from_cache(routes)
         collection = ActionDispatch::Routing::RouteSet::NamedRouteCollection.new
         routes.each do |name, path|
-          collection.add(name, journey_route(name, Rails.application, journey_path(path), {required_defaults: []}))
+          collection.add(name.to_sym, journey_route(name, Rails.application, journey_path(path), {required_defaults: []}))
         end
         collection
       end
