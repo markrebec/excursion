@@ -1,3 +1,7 @@
+0.0.13:
+* Adds the ability to register a raw hash with Excursion::Pool.register_hash
+* Allows passing a block to Excursion::Pool.register_application and using the new DSL to create or modify your application
+
 0.0.12:
 * Adds support for _path helpers
 * Adds #all and #all_apps methods to datastores to fetch all registered keys/applications
