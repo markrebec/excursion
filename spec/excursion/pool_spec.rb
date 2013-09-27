@@ -88,7 +88,7 @@ describe 'Excursion::Pool' do
       expect { Excursion::Pool.register_application Object }.to raise_exception(ArgumentError)
       expect { Excursion::Pool.register_application Object.new }.to raise_exception(ArgumentError)
       expect { Excursion::Pool.register_application Rails.application }.to_not raise_exception
-      expect { Excursion::Pool.register_application do; end }.to_not raise_exception
+      expect { Excursion::Pool.register_application { name 'dummy' } }.to_not raise_exception
       expect { Excursion::Pool.register_application(Rails.application) do; end }.to_not raise_exception
     end
 
