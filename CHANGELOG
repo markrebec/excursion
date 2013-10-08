@@ -1,3 +1,6 @@
+0.0.19:
+* Checks for nil values before setting applications in the pool
+
 0.0.18:
 * Fixes and cleanup for Excursion::Pool.all_applications and javascript helpers
 
