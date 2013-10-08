@@ -1,3 +1,6 @@
+0.0.17:
+* Actually includes the app/ path and javascript files in the gem (duh)
+
 0.0.16:
 * Moves rails engine into it's own file for proper inclusion
 
