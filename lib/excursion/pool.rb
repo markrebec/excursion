@@ -17,7 +17,8 @@ module Excursion
     def self.application(name)
       return @@applications[name] if @@applications.has_key?(name) && !@@applications[name].nil?
       
-      @@applications[name] = datastore.app(name)
+      app = datastore.app(name)
+      @@applications[name] = app unless app.nil?
     end
 
     def self.register_application(app=nil, opts={}, &block)
