@@ -24,4 +24,5 @@ end
 require 'excursion/route_pool'
 require 'excursion/pool'
 require 'excursion/helpers'
+require 'excursion/engine'
 require 'excursion/railtie'

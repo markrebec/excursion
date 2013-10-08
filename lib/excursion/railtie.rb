@@ -1,9 +1,4 @@
 module Excursion
-  class Engine < Rails::Engine
-    # automatically registers excursion as an engine and allows
-    # using the javascript helpers
-  end
-
   class Railtie < Rails::Railtie
     config.after_initialize do |app|
       if Excursion.configuration.register_app == true && !Excursion.configuration.datastore.nil? && !defined?(Rails::Generators::Base) # HACK is there a better way to attempt to check if we're running a generator?
