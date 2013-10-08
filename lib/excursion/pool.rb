@@ -11,6 +11,7 @@ module Excursion
       datastore.all_apps.each do |app|
         @@applications[app.name] = app
       end
+      @@applications
     end
 
     def self.application(name)
