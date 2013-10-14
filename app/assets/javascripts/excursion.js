@@ -30,7 +30,7 @@
           return replaced;
         };
         thisApp[routeName + '_url'] = function() {
-          var urlOpts = thisApp.default_url_options.host;
+          var urlOpts = window.location.protocol + '//' + thisApp.default_url_options.host;
           if (thisApp.default_url_options.port && parseInt(thisApp.default_url_options.port) != 80)
             urlOpts += ':' + thisApp.default_url_options.port;
           
