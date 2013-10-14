@@ -1,3 +1,7 @@
+0.1.0:
+* Prepends the current protocol onto javascript url helpers
+* Bumps to a 0.1.0 release
+
 0.0.20:
 * Fix: prevents registering apps on init (if enabled) when initializing within a rake task
 
