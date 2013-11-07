@@ -142,6 +142,8 @@ Excursion will automatically add this application to the route pool on initializ
 
 ### URL Helpers
 
+#### Controllers & Views
+
 The url helpers are available for use in your controllers and views by default, and can be used just like normal url helpers (except they're namespaced to the parent application). So, for example let's take two applications that need to be able to bounce a user back and forth - `AppOne` and `AppTwo`.
 
 ```ruby
@@ -157,6 +159,8 @@ end
 <%= link_to "logout", app_one.logout_url %>
 ```
 
+#### Other Classes
+
 If you want to make the url helpers available within some other class, you can simply include them in the class:
 
 ```ruby
@@ -170,6 +174,8 @@ class AppOne::ExampleClass
 end
 ```
 
+#### Mailers
+
 Or if you need them in a mailer:
 
 ```ruby
@@ -178,12 +184,47 @@ class MyMailer < ActionMailer::Base
 end
 ```
 
+#### Global Helpers
+
 Or you can just use the static helpers, which are globally accessible through `Excursion.url_helpers`:
 
 ```ruby
 Excursion.url_helpers.app_one.signup_url
 Excursion.url_helpers.app_two.root_url
 # etc.
+```
+
+### JavaScript Helpers
+
+Excursion also implements javascript helpers which you can use to provide access to URL helper methods within your frontend javascript. This is currently a prototype, mostly just because it needs to be cleaned up a bit, and the rendering helpers could probably be rethought a bit, but it works well enough to be used in production.
+
+To use the javascript helpers, you'll need to include the `excursion.js` javascript file and call the `render_excursion_javascript_helpers` method somewhere within your layout. This will include the required javascript library and dump a JSON object of the registered application routes into the helper.
+
+The simplest way to include the required javascript is to require it in your `application.js` file:
+
+```javascript
+//= require excursion
+//= require_tree .
+```
+
+Then you need render your routes so they're available to the helpers. Depending on how large your route pool is, this might be a decent sized chunk of JSON (that's the main reason this is still a "prototype"), so I recommend calling it somewhere near the end of your layout:
+
+```ruby
+<html>
+<head>...</head>
+<body>
+  ...
+  <%= render_excursion_javascript_helpers %>
+</body>
+</html>
+```
+
+You can then use the named helper methods to generate URLs and paths within your client-side javascript:
+
+```javascript
+Excursion.app_one.root_url          // http://app_one.local
+Excursion.app_two.user_url('mark')  // http://app_two.local/users/mark
+Excursion.app_two.user_path('mark') // /users/mark
 ```
 
 ### Rake tasks
@@ -195,6 +236,7 @@ Registers this application and it's routes with the configured route pool. This 
 #### `excursion:remove`
 
 Removes this application and it's routes from the configured route pool.
+
 
 ### Testing your application
 
