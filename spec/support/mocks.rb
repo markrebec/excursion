@@ -16,6 +16,7 @@ module Excursion
         'key1' => 'value_one',
         'key2' => 'value_two',
         'key3' => 'value_three',
+        '_flag_key' => 'test_flag'
       }
 
       SIMPLE_APP = {
@@ -44,6 +45,7 @@ module Excursion
       NAMED_ROUTES.each { |name,route| NAMED_ROUTE_COLLECTION.add(name, route) }
 
       APP_POOL = {
+        '_flag_key' => 'test_flag',
         SIMPLE_APP[:name] => SIMPLE_APP
       }
     end
