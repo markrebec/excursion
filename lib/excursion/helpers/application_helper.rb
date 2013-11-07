@@ -13,11 +13,9 @@ module Excursion
       end
 
       def method_missing(meth, *args)
-        if app_exists?(meth.to_s)
-          excursion(meth.to_s)
-        else
-          super
-        end
+        excursion(meth.to_s)
+      rescue
+        super
       end
 
       def respond_to_missing?(meth, include_private=false)

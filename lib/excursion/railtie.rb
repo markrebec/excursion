@@ -14,12 +14,14 @@ module Excursion
       namespace :excursion do
         desc "Register this app and it's routes with the route pool"
         task :register => :environment do
-          Excursion::Pool.register_application(Rails.application)
+          app = Excursion::Pool.register_application(Rails.application)
+          puts "Registered application #{app.name} in the #{Rails.env} route pool."
         end
 
         desc "Remove this app and it's routes from the route pool"
         task :remove => :environment do
           Excursion::Pool.remove_application(Rails.application)
+          puts "Rmoved application #{app.name} from the #{Rails.env} route pool."
         end
       end
     end
