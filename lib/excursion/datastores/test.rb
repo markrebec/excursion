@@ -6,13 +6,13 @@ module Excursion
   module Datastores
     class Test < Datastore
       attr_accessor :pool
-      APP_CLASS = Excursion::Pool::DummyApplication
+      @@app_class = Excursion::Pool::DummyApplication
       
       def read(key)
         return @pool[key.to_sym] if key.to_s.match(/^_.*/) && @pool.has_key?(key.to_sym)
 
         return unless Excursion.configuration.test_providers.nil? || Excursion.configuration.test_providers.map(&:to_sym).include?(key.to_sym)
-        @pool[key.to_sym] ||= APP_CLASS.new(key, {default_url_options: {host: 'www.example.com'}}, ActionDispatch::Routing::RouteSet::NamedRouteCollection.new).to_cache
+        @pool[key.to_sym] ||= @@app_class.new(key, {default_url_options: {host: 'www.example.com'}}, ActionDispatch::Routing::RouteSet::NamedRouteCollection.new).to_cache
       end
       alias_method :get, :read
       
