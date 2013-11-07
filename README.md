@@ -222,7 +222,7 @@ Then you need render your routes so they're available to the helpers. Depending 
 You can then use the named helper methods to generate URLs and paths within your client-side javascript:
 
 ```javascript
-Excursion.app_one.root_url          // http://app_one.local
+Excursion.app_one.root_url()        // http://app_one.local
 Excursion.app_two.user_url('mark')  // http://app_two.local/users/mark
 Excursion.app_two.user_path('mark') // /users/mark
 ```
