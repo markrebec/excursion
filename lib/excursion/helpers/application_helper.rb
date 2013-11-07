@@ -9,7 +9,7 @@ module Excursion
         raise NotInPool, "Application is not registered in the excursion route pool: '#{app_name}'" unless app_exists?(app_name)
         
         return Helpers.helper(app_name) unless Helpers.helper(app_name).nil?
-        Helpers.register_helper(UrlHelper.new(excursion_app(app_name)))
+        Helpers.register_helper(UrlHelper.new(app_name))
       end
 
       def method_missing(meth, *args)

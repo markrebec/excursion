@@ -29,7 +29,7 @@ describe 'Excursion::Helpers::ApplicationHelper' do
     context 'when the requested application is in the pool' do
       it 'should return an application UrlHelper for the app' do
         Excursion.url_helpers.excursion('dummy').should be_an_instance_of(Excursion::Helpers::UrlHelper)
-        Excursion.url_helpers.excursion('dummy').instance_variable_get(:@application).should eql(Excursion::Pool.application('dummy'))
+        Excursion.url_helpers.excursion('dummy').application.should eql(Excursion::Pool.application('dummy'))
       end
     end
     
