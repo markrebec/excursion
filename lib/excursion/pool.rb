@@ -15,6 +15,7 @@ module Excursion
     end
 
     def self.application(name)
+      check_local_cache
       return @@applications[name] if @@applications.has_key?(name) && !@@applications[name].nil?
       
       app = datastore.app(name)
@@ -33,7 +34,7 @@ module Excursion
       end
       
       if block_given?
-        if @@applications.has_key?(name)
+        if name && @@applications.has_key?(name)
           DSL.block_eval(@@applications[name], &block)
         else
           block_app = DSL.block_eval(&block)
@@ -42,17 +43,24 @@ module Excursion
         end
       end
       
-      datastore.set(name, @@applications[name].to_cache) if opts[:store]
+      if opts[:store]
+        datastore.set(name, @@applications[name].to_cache)
+        datastore.set('_pool_updated', Time.now.to_i)
+      end
       @@applications[name]
     end
 
-    def self.register_hash(app_hash)
+    def self.register_hash(app_hash, opts={})
       raise ArgumentError, "you must provide at minimum a hash with a :name key" unless app_hash.is_a?(Hash) && app_hash.has_key?(:name)
+      opts = {store: true}.merge(opts)
       
       app_hash = {default_url_options: Excursion.configuration.default_url_options, routes: {}, registered_at: Time.now}.merge(app_hash)
       name = app_hash[:name]
 
-      datastore.set(name, app_hash)
+      if opts[:store]
+        datastore.set(name, app_hash)
+        datastore.set('_pool_updated', Time.now.to_i)
+      end
       @@applications[name] = datastore.app(name)
     end
 
@@ -62,6 +70,7 @@ module Excursion
       name = app.class.name.underscore.split("/").first
       datastore.delete(name)
       @@applications.delete(name)
+      datastore.set('_pool_updated', Time.now.to_i)
     end
 
     def self.datastore
@@ -85,6 +94,18 @@ module Excursion
       when :test
         @@datastore ||= Excursion::Datastores::Test.new
       end
+    end
+
+    def self.pool_updated
+      datastore.get('_pool_updated').to_i || 0
+    end
+
+    def self.pool_refreshed
+      @@refreshed ||= 0
+    end
+
+    def self.check_local_cache
+      (@@refreshed = Time.now.to_i) && (@@applications = {}) if pool_updated > pool_refreshed
     end
   end
 end
