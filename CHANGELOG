@@ -1,3 +1,7 @@
+0.1.1:
+* Adds support for storing underscore-prefixed keys to track internal settings and flags (like _pool_updated)
+* Now tracking when the pool was last updated and refreshing the local cache when necessary. This means that if one application's routes are updated, you no longer need to restart the other applications to pick up the latest changes.
+
 0.1.0:
 * Prepends the current protocol onto javascript url helpers
 * Bumps to a 0.1.0 release
