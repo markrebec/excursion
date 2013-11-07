@@ -209,7 +209,7 @@ The simplest way to include the required javascript is to require it in your `ap
 
 Then you need render your routes so they're available to the helpers. Depending on how large your route pool is, this might be a decent sized chunk of JSON (that's the main reason this is still a "prototype"), so I recommend calling it somewhere near the end of your layout:
 
-```ruby
+```erb
 <html>
 <head>...</head>
 <body>
