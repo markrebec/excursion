@@ -4,7 +4,6 @@ module Excursion
       @@app_class = Excursion::Pool::Application
 
       def app(key)
-        puts @@app_class
         @@app_class.from_cache(read(key))
       end
       
