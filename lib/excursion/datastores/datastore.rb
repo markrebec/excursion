@@ -1,16 +1,18 @@
 module Excursion
   module Datastores
     class Datastore
-      @@app_class = Excursion::Pool::Application
+      def application_class
+        Excursion::Pool::Application
+      end
 
       def app(key)
-        @@app_class.from_cache(read(key))
+        application_class.from_cache(read(key))
       end
       
       def all_apps
         apps = []
         all.delete_if { |k| k.match(/^_.*/) }.values.each do |v|
-          apps << @@app_class.from_cache(v)
+          apps << application_class.from_cache(v)
         end
         apps
       end
