@@ -8,7 +8,7 @@ module Excursion
       default_url_options: {}, # default_url_options used when building routes for this app
       retry_limit: 3, # retry limit for datastores that user remote servers
       enable_cors: false, # enables cross-origin resource sharing for this app
-      cors_whitelist: nil, # whitelist for allowing cors for specific domains
+      cors_whitelist: :pool, # whitelist for allowing cors for specific domains - defaults to only allow registered excursion apps
       cors_blacklist: nil, # blacklist for denying cors for specific domains
       cors_allow_methods: %w(POST PUT PATCH GET DELETE), # list of allowed cors request methods (Access-Control-Allow-Methods)
       cors_allow_headers: %w(origin content-type accept x-requested-with x-csrf-token), # list of allowed cors request headers (Access-Control-Allow-Headers)

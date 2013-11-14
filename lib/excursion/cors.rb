@@ -4,11 +4,12 @@ module Excursion
       base.send :before_filter, :cors_headers if Excursion.configuration.enable_cors
     end
 
-    def cors_match?(origin, match)
-      match.is_a?(Regexp) ? origin.match(match) : origin == match
+    def cors_match?(origin, host)
+      host.is_a?(Regexp) ? origin.match(host) : origin.downcase == host.downcase
     end
 
     def cors_whitelisted?(origin)
+      return Excursion::Pool.all_applications.values.map { |app| app.default_url_options[:host] }.any? { |cw| cors_match? origin, cw } if Excursion.configuration.cors_whitelist == :pool
       Excursion.configuration.cors_whitelist.nil? || Excursion.configuration.cors_whitelist.any? { |cw| cors_match? origin, cw }
     end
 
