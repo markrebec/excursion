@@ -1,3 +1,7 @@
+0.1.3:
+* Adds support for CORS - see: https://github.com/markrebec/excursion/pull/5
+* Adds Excursion::Pool.secret_key_base to generate and share a secret token across your applications using excursion
+
 0.1.2:
 * Fixes bugs with the test datastore not properly returning dummy applications
 
