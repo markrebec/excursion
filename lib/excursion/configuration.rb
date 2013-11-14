@@ -6,7 +6,14 @@ module Excursion
         # include_pattern: to only include certain routes
       register_app: true, # whether or not to register the app automatically on init
       default_url_options: {}, # default_url_options used when building routes for this app
-      retry_limit: 3 # retry limit for datastores that user remote servers
+      retry_limit: 3, # retry limit for datastores that user remote servers
+      enable_cors: false, # enables cross-origin resource sharing for this app
+      cors_whitelist: nil, # whitelist for allowing cors for specific domains
+      cors_blacklist: nil, # blacklist for denying cors for specific domains
+      cors_allow_methods: %w(POST PUT PATCH GET DELETE), # list of allowed cors request methods (Access-Control-Allow-Methods)
+      cors_allow_headers: %w(origin content-type accept x-requested-with x-csrf-token), # list of allowed cors request headers (Access-Control-Allow-Headers)
+      cors_allow_credentials: true, # allow credentials with cors requests (Access-Control-Allow-Credentials)
+      cors_max_age: 1728000 # cors max age (Access-Control-Max-Age)
     }
 
     #attr_reader *DEFAULT_CONFIGURATION_OPTIONS.keys
