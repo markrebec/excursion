@@ -107,5 +107,13 @@ module Excursion
     def self.check_local_cache
       (@@refreshed = Time.now.to_i) && (@@applications = {}) if pool_updated > pool_refreshed
     end
+
+    def self.set_secret_key_base
+      datastore.set('_secret_key_base', Digest::MD5.hexdigest(SecureRandom.base64(32)))
+    end
+
+    def self.secret_key_base
+      key = datastore.get('_secret_key_base') || set_secret_key_base
+    end
   end
 end
