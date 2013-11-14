@@ -16,10 +16,10 @@ module Excursion
 
     def self.application(name)
       check_local_cache
-      return @@applications[name] if @@applications.has_key?(name) && !@@applications[name].nil?
+      return @@applications[name.to_s] if @@applications.has_key?(name.to_s) && !@@applications[name.to_s].nil?
       
       app = datastore.app(name)
-      @@applications[name] = app unless app.nil?
+      @@applications[name.to_s] = app unless app.nil?
     end
 
     def self.register_application(app=nil, opts={}, &block)
@@ -61,7 +61,7 @@ module Excursion
         datastore.set(name, app_hash)
         datastore.set('_pool_updated', Time.now.to_i)
       end
-      @@applications[name] = datastore.app(name)
+      @@applications[name.to_s] = datastore.app(name)
     end
 
     def self.remove_application(app)
