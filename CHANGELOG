@@ -1,3 +1,6 @@
+0.1.4:
+* Fix for cases where rack reports the CORS origin header as HTTP_ORIGIN
+
 0.1.3:
 * Adds support for CORS - see: https://github.com/markrebec/excursion/pull/5
 * Adds Excursion::Pool.secret_key_base to generate and share a secret token across your applications using excursion
