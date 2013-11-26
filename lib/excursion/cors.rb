@@ -18,7 +18,8 @@ module Excursion
     end
 
     def cors_headers
-      if !request.headers['Origin'].nil? && cors_whitelisted?(request.headers['Origin']) && !cors_blacklisted?(request.headers['Origin'])
+      origin = request.headers['Origin'] || request.headers['HTTP_ORIGIN']
+      if !origin.nil? && cors_whitelisted?(origin) && !cors_blacklisted?(origin)
         headers['Access-Control-Allow-Origin'] = request.headers['Origin']
         headers['Access-Control-Allow-Methods'] = Excursion.configuration.cors_allow_methods.join(',')
         headers['Access-Control-Allow-Headers'] = Excursion.configuration.cors_allow_headers.join(', ')
