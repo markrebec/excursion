@@ -2,16 +2,16 @@
 
 [![Build Status](https://travis-ci.org/markrebec/excursion.png)](https://travis-ci.org/markrebec/excursion)
 
-Excursion provides a pool of routes into which applications can dump their host information and a basic representation of their routing table. Other applications configured to use the same pool can utilize namespaced url helpers for redirecting, drawing links, etc. between apps. This is extremely useful when multiple applications are sharing a database or, for example, are powered by a shared [rails engine](http://edgeapi.rubyonrails.org/classes/Rails/Engine.html). 
+Excursion provides javascript URL helpers, [CORS](http://en.wikipedia.org/wiki/Cross-origin_resource_sharing) configuration and a pool of routes into which applications can dump their host information and a basic representation of their routing table. Other applications configured to use the same route pool can utilize namespaced url helpers for redirecting, drawing links, placing XHR requests, etc. between apps. This is extremely useful when multiple applications are sharing a database, authentication, and/or are powered by a shared [rails engine](http://edgeapi.rubyonrails.org/classes/Rails/Engine.html). 
 
 #### Why it's useful
 
-Lets say you have a standalone admin or CMS application running separately from your user-facing frontend application, to manage your content, users and other internal concerns. Or maybe you also have discussion forums, or a knowledge base or help center, all running as a standalone rails applications. These apps would be sharing a database, and would likely be sharing models, authentication and other functionality via gems or a rails engine. 
+Lets say you have a standalone admin or CMS application running separately from your user-facing frontend application to manage your content, users and other internal concerns. Or maybe you also have discussion forums, a blog, or maybe a knowledge base or help center, all running as a standalone rails applications. These apps would be sharing a database, and would likely be sharing models, authentication/cookies/sessions and other functionality via common gems.
 
-If you wanted to add a link, from the admin edit user screen, to a user's profile endpoint in the frontend app, you would have to do something like this:
+If you wanted to add a link from the admin edit user screen to view a user's profile in the frontend app, you might have to do something like this:
 
 ```erb
-<%= link_to "user profile", "http://frontend_app.example.com/users/#{@user.username}" %>
+<%= link_to "view profile", "http://frontend_app.example.com/users/#{@user.username}" %>
 ```
 
 Maybe you have some default url options setup to help with the host, port, etc., and maybe your `User` model has a `to_param` method defined to return the username and simplify using it in URLs and other places, but it's still not pretty. At the **very best** you're still hardcoding the path, and if that route ever changes in the other application it's unlikely you'll catch it right away for any apps hardcoded like this.
@@ -19,7 +19,7 @@ Maybe you have some default url options setup to help with the host, port, etc.,
 With excursion, once an app has registered itself with the route pool, the above becomes:
 
 ```erb
-<%= link_to "user profile", frontend_app.user_url(@user) %>
+<%= link_to "view profile", frontend_app.user_url(@user) %>
 ```
 
 If you want to go the other way, and add a link on your user profile pages to ban the user (only for your admins of course!) using an endpoint in the admin app, it's just as easy:
@@ -28,13 +28,19 @@ If you want to go the other way, and add a link on your user profile pages to ba
 <%= link_to "ban this user", admin_app.ban_user_url(@user) %>
 ```
 
-The namespaced url helpers work just like rails built-in helpers, and (using the default configuration) every time an application initializes it will update it's routing table in the pool, so you don't have to worry about maintaining hardcoded paths in your applications. Of course, if you change the **name** of the route, you'll still have to update any calls to the namespaced url helper for that route in any apps that use it (just like you would need to update calls to the standard url helpers within the app where you're making that change). But, when you do make those changes, excursion will complain with a `NoMethodError` just like rails' built-in url helpers would, letting you know what needs to be changed rather than relying on smoke tests or QA to find dead links.
+The namespaced url helpers work just like rails built-in helpers, and (using the default configuration) every time an application initializes it will update it's routing table in the pool, so you don't have to worry about maintaining hardcoded paths in your applications. 
 
-The helper methods are also extremely handy for shared controllers and views - If you've got multiple apps sharing a layout or some partials via an engine or gem, using the namespaced url helpers ensures links will always point to the correct place no matter what app is currently rendering the template.
+Of course, if you change the **name** of the route you'll still have to update any calls to the namespaced `*_url` helpers for that route wherever you're using it, just like you would need to update calls to rails' built-in `*_url` helpers - but when you do make those changes, excursion will complain with a `NoMethodError` just like rails' built-in url helpers would, letting you know what needs to be changed rather than relying on smoke tests or QA to find dead links.
+
+The helper methods are also extremely handy for shared controllers and views. If you've got multiple apps sharing a layout or some templates or partials via a common gem, using the namespaced url helpers within those shared templates ensures links will always point to the correct place no matter what app is currently rendering them.
+
+##### CORS support and javascript helpers
+
+Excursion also provides support for two additional common conerns when navigating cross-application routes: CORS requests and javascript url helpers.  You may optionally include the excursion javascript helpers in your templates, which will provide you with url helper methods in your client-side javascript for all applications in the route pool. And because if you're using the javascript url helpers, it's likely you're making cross-origin XHR requests, excursion also includes optional support for CORS headers and `OPTIONS` requests, with configuration options to control access to your resources.
 
 #### A note about `:format` support
 
-Basically, it's not supported right now. Unfortunately excursion currently does not support passing a format to it's url helpers, and the `:format` path part is stripped completely from the returned url.
+Basically, it's not supported right now.
 
 The issue is being addressed, and you can take a look at [Issue #1](https://github.com/markrebec/excursion/issues/1) for more details or if you'd like to try to help out.
 
@@ -131,6 +137,16 @@ Excursion.configure do |config|
   # Requires the `dalli` gem
   config.datastore = :active_record_with_memcache
   config.memcache_server = 'localhost:11211'
+
+
+  # CORS Configuration
+  config.enable_cors = true                                                                 # enables cross-origin resource sharing for this app (default false)
+  config.cors_whitelist = :pool                                                             # whitelist for allowing cors for specific domains (defaults to only allow apps in the pool)
+  config.cors_blacklist = nil                                                               # blacklist for denying cors for specific domains
+  config.cors_allow_methods = %w(POST PUT PATCH GET DELETE)                                 # list of allowed cors request methods (Access-Control-Allow-Methods)
+  config.cors_allow_headers = %w(origin content-type accept x-requested-with x-csrf-token)  # list of allowed cors request headers (Access-Control-Allow-Headers)
+  config.cors_allow_credentials = true                                                      # allow credentials with cors requests (Access-Control-Allow-Credentials)
+  config.cors_max_age = 1728000                                                             # cors max age (Access-Control-Max-Age)
 end
 ```
 
@@ -196,18 +212,21 @@ Excursion.url_helpers.app_two.root_url
 
 ### JavaScript Helpers
 
-Excursion also implements javascript helpers which you can use to provide access to URL helper methods within your frontend javascript. This is currently a prototype, mostly just because it needs to be cleaned up a bit, and the rendering helpers could probably be rethought a bit, but it works well enough to be used in production.
+Excursion also implements javascript helpers which you can use to provide access to URL helper methods within your frontend javascript. This is currently a prototype, mostly just because it needs to be cleaned up a bit, but it works well enough to be used in production.
 
-To use the javascript helpers, you'll need to include the `excursion.js` javascript file and call the `render_excursion_javascript_helpers` method somewhere within your layout. This will include the required javascript library and dump a JSON object of the registered application routes into the helper.
+To use the javascript helpers, you'll need to include the `excursion.js` javascript file and then either include the `excursion/pool.js` file **or** call the `render_excursion_javascript_helpers` helper method somewhere within your layout. The former will automatically render your route pool into the `pool.js` file when it is included in your layout, while the latter will dump your route pool directly into your layout and load it that way.
 
-The simplest way to include the required javascript is to require it in your `application.js` file:
+The simplest way to include the required javascript and your route pool is to require them in your `application.js` file:
 
 ```javascript
 //= require excursion
+//= require excursion/pool
 //= require_tree .
 ```
 
-Then you need render your routes so they're available to the helpers. Depending on how large your route pool is, this might be a decent sized chunk of JSON (that's the main reason this is still a "prototype"), so I recommend calling it somewhere near the end of your layout:
+The `require excursion` line is required, while the `require excursion/pool` line is optional but provides the simplest way to get your javascript helpers working.
+
+**If you do not** include the `require excursion/pool` line above, then you need render your routes so they're available using the `render_excursion_javascript_helpers` method. I recommend calling it somewhere near the end of your layout:
 
 ```erb
 <html>
@@ -225,6 +244,23 @@ You can then use the named helper methods to generate URLs and paths within your
 Excursion.app_one.root_url()        // http://app_one.local
 Excursion.app_two.user_url('mark')  // http://app_two.local/users/mark
 Excursion.app_two.user_path('mark') // /users/mark
+```
+
+### CORS
+
+In order to take advantage of the CORS support provided by excursion, you'll need to configure the CORS-related settings in the configuration section above and mount the `OPTIONS` routes at the top of your `config/routes.rb` file like this:
+
+```ruby
+MyApp::Application.routes.draw do
+  mount Excursion::Engine => '/'
+  ...
+end
+```
+
+This will provide you with the following route for CORS preflight `OPTIONS` requests, as well as return the appropriate CORS response headers for the actual request:
+
+```
+OPTIONS /*path(.:format) application#cors_preflight
 ```
 
 ### Rake tasks
