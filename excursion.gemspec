@@ -4,8 +4,8 @@ require "excursion/version"
 Gem::Specification.new do |s|
   s.name        = "excursion"
   s.version     = Excursion::VERSION
-  s.summary     = "Route pooling to share routes between applications"
-  s.description = "Provides a pool of routes into which applications can dump their host information and routing table. Other applications can then utilize application namespaced helper methods for redirecting, etc. between apps."
+  s.summary     = "Cross-application route pooling, javascript helpers and CORS"
+  s.description = "Provides optional javascript url helpers, CORS configuration and a pool of routes into which applications can dump their host information and routing table. Other applications can then utilize application namespaced helper methods for redirecting, drawing links, placing cross-origin XHR requests, etc. between apps."
   s.authors     = ["Mark Rebec"]
   s.email       = ["mark@markrebec.com"]
   s.files       = Dir["lib/**/*", "app/**/*", "config/**/*"]

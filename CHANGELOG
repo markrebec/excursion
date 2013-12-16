@@ -1,3 +1,7 @@
+0.1.5:
+* Adds a route pool javascript file which can be used to load the pool instead of dumping it directly into your templates
+* Base64 encodes the raw route pool by default to provide some slight obfuscation
+
 0.1.4:
 * Fix for cases where rack reports the CORS origin header as HTTP_ORIGIN
 
