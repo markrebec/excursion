@@ -1,0 +1,1 @@
+(function() { Excursion.loadPool("<%= Base64.encode64(Excursion::Pool.all_applications.values.map(&:to_cache).to_json.to_s).gsub("\n","") %>"); }());
