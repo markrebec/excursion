@@ -1,6 +1,6 @@
 module Excursion
-  module Helpers
-    class UrlHelper
+  module Builders
+    class UrlBuilder
 
       def application
         Excursion::Pool.application(@appname)

@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-class Excursion::Specs::TestHelperOne
-  include Excursion::Helpers::ApplicationHelper
+class Excursion::Specs::TestBuilderOne
+  include Excursion::Builders::ApplicationBuilder
 end
-class Excursion::Specs::TestHelperTwo
-  include Excursion::Helpers::ApplicationHelper
+class Excursion::Specs::TestBuilderTwo
+  include Excursion::Builders::ApplicationBuilder
 end
 
 describe 'Excursion' do
@@ -35,7 +35,7 @@ describe 'Excursion' do
   end
 end
 
-describe 'Excursion::Helpers' do
+describe 'Excursion::Builders' do
   before(:each) do
     Excursion::Pool.class_variable_set(:@@applications, {})
     File.unlink(Excursion::Specs::DUMMY_POOL_FILE) if File.exists?(Excursion::Specs::DUMMY_POOL_FILE)
@@ -55,11 +55,11 @@ describe 'Excursion::Helpers' do
     end
   end
   
-  it 'should share instances of helper classes' do
-    h1 = Excursion::Specs::TestHelperOne.new
-    h2 = Excursion::Specs::TestHelperTwo.new
+  it 'should share instances of builder classes' do
+    h1 = Excursion::Specs::TestBuilderOne.new
+    h2 = Excursion::Specs::TestBuilderTwo.new
     Excursion::Pool.register_application(Rails.application)
     h1.dummy.should eql(h2.dummy)
-    h1.dummy.should eql(Excursion::Specs::TestHelperOne.new.dummy)
+    h1.dummy.should eql(Excursion::Specs::TestBuilderOne.new.dummy)
   end
 end

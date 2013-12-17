@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Excursion::Helpers::UrlHelper' do
+describe 'Excursion::Builders::UrlBuilder' do
   before(:all) do
     Excursion::Pool.class_variable_set(:@@applications, {})
     File.unlink(Excursion::Specs::DUMMY_POOL_FILE) if File.exists?(Excursion::Specs::DUMMY_POOL_FILE)
@@ -38,7 +38,7 @@ describe 'Excursion::Helpers::UrlHelper' do
   context 'url helper methods' do
     before(:all) do
       Excursion.configuration.default_url_options = {host: 'test.example.com', port: 3000}
-      Excursion::Helpers.instance_variable_get(:@helpers).delete('dummy')
+      Excursion::Builders.instance_variable_get(:@builders).delete('dummy')
       Excursion::Pool.remove_application(Rails.application)
       Excursion::Pool.register_application(Rails.application)
     end

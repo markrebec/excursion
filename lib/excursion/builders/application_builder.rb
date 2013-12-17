@@ -1,15 +1,15 @@
 module Excursion
-  module Helpers
-    module ApplicationHelper
+  module Builders
+    module ApplicationBuilder
       
-      # Returns an Excursion::Helpers::ApplicationHelper if the app exists in the route pool.
+      # Returns an Excursion::Builders::UrlBuilder if the app exists in the route pool.
       #
       # Raises an exception if the requested app is not in the route pool.
       def excursion(app_name)
         raise NotInPool, "Application is not registered in the excursion route pool: '#{app_name}'" unless app_exists?(app_name)
         
-        return Helpers.helper(app_name) unless Helpers.helper(app_name).nil?
-        Helpers.register_helper(UrlHelper.new(app_name))
+        return Builders.builder(app_name) unless Builders.builder(app_name).nil?
+        Builders.register_builder(UrlBuilder.new(app_name))
       end
 
       def method_missing(meth, *args)
@@ -35,5 +35,5 @@ module Excursion
   end
 end
 
-ActionController::Base.send :include, Excursion::Helpers::ApplicationHelper
-ActionController::Base.send :helper, Excursion::Helpers::ApplicationHelper
+ActionController::Base.send :include, Excursion::Builders::ApplicationBuilder
+ActionController::Base.send :helper, Excursion::Builders::ApplicationBuilder

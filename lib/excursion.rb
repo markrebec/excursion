@@ -23,7 +23,7 @@ end
 
 require 'excursion/route_pool'
 require 'excursion/pool'
-require 'excursion/helpers'
+require 'excursion/builders'
 require 'excursion/engine'
 require 'excursion/railtie'
 require 'excursion/cors'
