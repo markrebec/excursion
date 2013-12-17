@@ -1,5 +1,6 @@
 require File.expand_path("../dummy/config/environment", __FILE__)
 require 'rspec/core'
+require 'rspec/rails'
 
 ActiveRecord::Base.establish_connection :adapter => "sqlite3",
                                         :database => ":memory:"
