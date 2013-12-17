@@ -1,6 +1,5 @@
 require 'excursion/helpers/url_helper'
 require 'excursion/helpers/application_helper'
-require 'excursion/helpers/javascript_helper'
 
 module Excursion
   module Helpers
@@ -19,14 +18,14 @@ module Excursion
       @helpers[h.application.name] = h
       h
     end
-  end
 
-  class StaticHelper
-    include Helpers::ApplicationHelper
+    class StaticHelper
+      include ApplicationHelper
+    end
   end
 
   # Provides quick global access to url helpers with using the StaticHelper
   def self.url_helpers
-    @url_helpers ||= StaticHelper.new
+    @url_helpers ||= Helpers::StaticHelper.new
   end
 end
