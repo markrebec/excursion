@@ -34,6 +34,3 @@ module Excursion
     end
   end
 end
-
-ActionController::Base.send :include, Excursion::Builders::ApplicationBuilder
-ActionController::Base.send :helper, Excursion::Builders::ApplicationBuilder
