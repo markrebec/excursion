@@ -8,9 +8,9 @@ module Excursion
         Excursion::Pool.register_application(app)
       end
 
-      ApplicationController.send :include, Excursion::Builders::ApplicationBuilder
-      ApplicationController.send :helper, Excursion::Builders::ApplicationBuilder
-      ApplicationController.send :include, Excursion::CORS if Excursion.configuration.enable_cors
+      ActionController::Base.send :include, Excursion::Builders::ApplicationBuilder
+      ActionController::Base.send :helper, Excursion::Builders::ApplicationBuilder
+      ActionController::Base.send :include, Excursion::CORS if Excursion.configuration.enable_cors
     end
 
     rake_tasks do
