@@ -224,7 +224,7 @@ The simplest way to include the required javascript and your route pool is to re
 //= require_tree .
 ```
 
-The `require excursion` line is required, while the `require excursion/pool` line is optional but provides the simplest way to get your javascript helpers working.
+The `require excursion` line is mandatory, while the `require excursion/pool` line is optional but provides the simplest way to get your javascript helpers working.
 
 **If you do not** include the `require excursion/pool` line above, then you need render your routes so they're available using the `render_excursion_javascript_helpers` method. I recommend calling it somewhere near the end of your layout:
 
