@@ -1,5 +1,9 @@
 module Excursion
   class Railtie < Rails::Railtie
+    initializer "excursion.asset_middleware" do |app|
+      app.config.middleware.use "Excursion::AssetMiddleware"
+    end
+
     config.after_initialize do |app|
       # Do not register on init when running a generator (is there a better way to detect this? Maybe $0 == 'rails' && ARGV.include?('generate') or 'g')
       # Do not register on init when running a rake task
