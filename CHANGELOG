@@ -1,3 +1,6 @@
+0.1.7:
+* Moves the cors_preflight action to it's own controller - Changes to AbstractController::Base meant it wasn't registering as an action for ApplicationController anymore
+
 0.1.6:
 * Adds some simple rack middleware that sets the 'Last-Modified' response header for the pool.js file to the last_updated timestamp in the route pool
 
