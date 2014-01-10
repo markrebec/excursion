@@ -27,10 +27,5 @@ module Excursion
         headers['Access-Control-Max-Age'] = Excursion.configuration.cors_max_age.to_s
       end
     end
-
-    def cors_preflight
-      cors_headers
-      render :text => '', :content_type => 'text/plain'
-    end
   end
 end
