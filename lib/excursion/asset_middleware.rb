@@ -8,6 +8,8 @@ module Excursion
       request = Rack::Request.new(env)
       response = @app.call(env)
       if request.path =~ /^\/assets\/excursion\//
+        response[1]["Cache-Control"] = 'no-cache, no-store'
+        response[1]["Etag"] = Digest::MD5.hexdigest(Excursion::Pool.all_applications.values.map(&:to_cache).to_json.to_s)
         response[1]["Last-Modified"] = Time.at(Excursion::Pool.pool_updated).strftime('%a, %d %b %Y %H:%M:%S %Z')
       end
       response
