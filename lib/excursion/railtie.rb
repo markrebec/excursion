@@ -12,8 +12,6 @@ module Excursion
         Excursion::Pool.register_application(app)
       end
 
-      ActionController::Base.send :include, Excursion::Builders::ApplicationBuilder
-      ActionController::Base.send :helper, Excursion::Builders::ApplicationBuilder
       ActionController::Base.send :include, Excursion::CORS if Excursion.configuration.enable_cors
     end
 
