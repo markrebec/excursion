@@ -228,7 +228,8 @@ The simplest way to include the required javascript and your route pool is to re
 
 This will automatically provide your client-side javascript with the `Excursion` object with helper methods defined for each application in your route pool.
 
-**Asset Caching**
+**A note about asset caching**
+
 The `excursion/pool.js` asset file is dynamic and loads your route pool on render. But (depending on your environment configuration) rails will automatically cache your assets and serve those cached versions. This means if you were to add a new application or route to your pool and then reloaded the page, you'd still be loading the cached route pool javascript file. This is generally only a problem in development environments where you're actively making changes, and assets for production should be precompiled anyway.
 
 One workaround is to ensure you clear your asset cache (usually `your_app/tmp/cache/assets`) whenever you update the route pool. 
