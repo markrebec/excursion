@@ -181,7 +181,7 @@ If you want to make the url helpers available within some other class, you can s
 
 ```ruby
 class AppOne::ExampleClass
-  include Excursion::Helpers::ApplicationHelper
+  include Excursion::Builders::ApplicationBuilder
 
   def do_something_with_user(user)
     # You can then use the helper methods straight away
@@ -196,7 +196,7 @@ Or if you need them in a mailer:
 
 ```ruby
 class MyMailer < ActionMailer::Base
-  add_template_helper Excursion::Helpers::ApplicationHelper
+  add_template_helper Excursion::Builders::ApplicationBuilder
 end
 ```
 
@@ -216,6 +216,8 @@ Excursion also implements javascript helpers which you can use to provide access
 
 To use the javascript helpers, you'll need to include the `excursion.js` javascript file and then either include the `excursion/pool.js` file **or** call the `render_excursion_javascript_helpers` helper method somewhere within your layout. The former will automatically render your route pool into the `pool.js` file when it is included in your layout, while the latter will dump your route pool directly into your layout and load it that way.
 
+#### With the pool.js asset file
+
 The simplest way to include the required javascript and your route pool is to require them in your `application.js` file:
 
 ```javascript
@@ -224,9 +226,31 @@ The simplest way to include the required javascript and your route pool is to re
 //= require_tree .
 ```
 
-The `require excursion` line is mandatory, while the `require excursion/pool` line is optional but provides the simplest way to get your javascript helpers working.
+This will automatically provide your client-side javascript with the `Excursion` object with helper methods defined for each application in your route pool.
 
-**If you do not** include the `require excursion/pool` line above, then you need render your routes so they're available using the `render_excursion_javascript_helpers` method. I recommend calling it somewhere near the end of your layout:
+**Asset Caching**
+The `excursion/pool.js` asset file is dynamic and loads your route pool on render. But (depending on your environment configuration) rails will automatically cache your assets and serve those cached versions. This means if you were to add a new application or route to your pool and then reloaded the page, you'd still be loading the cached route pool javascript file. This is generally only a problem in development environments where you're actively making changes, and assets for production should be precompiled anyway.
+
+One workaround is to ensure you clear your asset cache (usually `your_app/tmp/cache/assets`) whenever you update the route pool. 
+
+Alternately, adding the following settings to your `/config/environments/development.rb` should prevet asset caching altogether, but may slow down performance in your development environment if you've got a large number of assets:
+
+```ruby
+  config.assets.cache_store = :null_store  # Disables the Asset cache
+```
+
+#### With the view helper
+
+If you prefer, you can include the javascript route pool directly in your layout instead of using the asset file. This will dump a script tag into your layout containing the javascript route pool.
+
+You will still need to include the core `excursion.js` library either directly in your layout, or in your `application.js` file:
+
+```javascript
+//= require excursion
+//= require_tree .
+```
+
+In order to render your routes into the layout so they're available, use the `render_excursion_javascript_helpers` method. I recommend calling it somewhere near the end of your layout:
 
 ```erb
 <html>
@@ -238,6 +262,8 @@ The `require excursion` line is mandatory, while the `require excursion/pool` li
 </html>
 ```
 
+#### Javascript helper usage
+
 You can then use the named helper methods to generate URLs and paths within your client-side javascript:
 
 ```javascript
@@ -245,6 +271,12 @@ Excursion.app_one.root_url()        // http://app_one.local
 Excursion.app_two.user_url('mark')  // http://app_two.local/users/mark
 Excursion.app_two.user_path('mark') // /users/mark
 ```
+
+#### Security concerns
+
+Yes. Using these javascript helpers means your routes will be made available to client-side javascript, which means the route pool itself is accessible by anyone (with a little bit of effort). In some cases this may be a security concern, but for the most part your routes are "public" by definition - they're the public entry point into your application. Thinking you are "hiding a URL" just because the outside world doesn't have access to your `config/routes.rb` file is by no means a safeguard, and it's the responsibility of authorization and access control to prevent unwanted access to controller actions.
+
+With all that said, I have taken some small steps to obfuscate the raw route pool a little bit by base64 encoding the pool so that it's not just a clear JSON hash for all the world to see. There are also plans to add some whitelist/blacklist/regex support for including or excluding routes and applications.
 
 ### CORS
 
