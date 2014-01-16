@@ -1,9 +1,5 @@
 module Excursion
   class Railtie < Rails::Railtie
-    initializer "excursion.asset_middleware" do |app|
-      app.config.middleware.use "Excursion::AssetMiddleware"
-    end
-
     config.after_initialize do |app|
       # Do not register on init when running a generator (is there a better way to detect this? Maybe $0 == 'rails' && ARGV.include?('generate') or 'g')
       # Do not register on init when running a rake task
@@ -26,7 +22,7 @@ module Excursion
         desc "Remove this app and it's routes from the route pool"
         task :remove => :environment do
           Excursion::Pool.remove_application(Rails.application)
-          puts "Rmoved application #{app.name} from the #{Rails.env} route pool."
+          puts "Removed application #{app.name} from the #{Rails.env} route pool."
         end
       end
     end
