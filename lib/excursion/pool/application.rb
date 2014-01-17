@@ -45,7 +45,7 @@ module Excursion
 
       def from_cache(cached)
         @routes = routes_from_cache(cached[:routes]) if cached.has_key?(:routes)
-        @default_url_options = cached[:default_url_options]
+        @default_url_options = cached[:default_url_options] || {}
         @registered_at = (Time.at(cached[:registered_at]) rescue Time.now)
       end
       
