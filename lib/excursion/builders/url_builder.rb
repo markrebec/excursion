@@ -10,19 +10,20 @@ module Excursion
         application.routes
       end
 
+      def url_for(route, *args)
+        ActionDispatch::Http::URL.url_for(route_options(route, *args))
+      end
+
       def method_missing(meth, *args)
         route = application.route(route_name_from_method(meth))
-        if route.nil?
-          super
-        else
+        if route
           if meth.to_s.match(/_url\Z/)
-            url_opts = (application.default_url_options || {}).clone
-            url_opts.merge!(args.slice!(args.length-1)) if args.last.is_a?(Hash) #&& args.last.has_key?(:host)
-              
-            ActionDispatch::Http::URL.url_for(url_opts.merge({path: replaced_path(route, args)}))
+            url_for(route, *args)
           elsif meth.to_s.match(/_path\Z/)
-            replaced_path(route, args)
+            replaced_path(route, *args)
           end
+        else
+          super
         end
       end
 
@@ -36,6 +37,11 @@ module Excursion
         @appname = app_name
       end
 
+      def route_options(route, *args)
+        opts = args.extract_options!
+        application.default_url_options.merge(opts).merge({path: replaced_path(route, *args)})
+      end
+
       def route_name_from_method(meth)
         meth.to_s.gsub(/_(url|path)\Z/,'').to_sym
       end
@@ -43,7 +49,7 @@ module Excursion
       # Very hacky method to replace path parts with values
       #
       # Needs work, particularly around formatting which is basically ignored right now.
-      def replaced_path(route, args)
+      def replaced_path(route, *args)
         path = route.path.spec.to_s.dup
 
         route.required_parts.zip(args) do |part, arg|
