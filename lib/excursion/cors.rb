@@ -9,8 +9,11 @@ module Excursion
     end
 
     def cors_whitelisted?(origin)
-      return Excursion::Pool.all_applications.values.map { |app| app.default_url_options[:host] }.any? { |cw| cors_match? origin, cw } if Excursion.configuration.cors_whitelist == :pool
-      Excursion.configuration.cors_whitelist.nil? || Excursion.configuration.cors_whitelist.any? { |cw| cors_match? origin, cw }
+      if Excursion.configuration.cors_whitelist == :pool
+        Excursion::Pool.all_applications.values.map { |app| app.default_url_options[:host] }.any? { |cw| cors_match? origin, cw }
+      else
+        Excursion.configuration.cors_whitelist.nil? || Excursion.configuration.cors_whitelist.any? { |cw| cors_match? origin, cw }
+      end
     end
 
     def cors_blacklisted?(origin)
