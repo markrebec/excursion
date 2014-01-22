@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.homepage    = "http://github.com/markrebec/excursion"
   s.license     = "MIT"
 
-  s.add_dependency "rails", ">= 3.0.0"
+  s.add_dependency "railties", ">= 3.0.0"
 
   s.add_development_dependency "rspec-rails"
   s.add_development_dependency "sqlite3"
