@@ -4,6 +4,8 @@
 [![Build Status](https://travis-ci.org/markrebec/excursion.png)](https://travis-ci.org/markrebec/excursion)
 [![Code Climate](https://codeclimate.com/github/markrebec/excursion.png)](https://codeclimate.com/github/markrebec/excursion)
 [![Coverage Status](https://coveralls.io/repos/markrebec/excursion/badge.png?branch=master)](https://coveralls.io/r/markrebec/excursion?branch=master)
+[![Dependency Status](https://gemnasium.com/markrebec/excursion.png)](https://gemnasium.com/markrebec/excursion)
+
 
 Excursion provides a pool of routes into which applications can dump their host information and a basic representation of their routing table, along with javascript URL helpers and [CORS](http://en.wikipedia.org/wiki/Cross-origin_resource_sharing) configuration to enable cross-origin resource sharing for any of your route endpoints. Other applications configured to use the same route pool can utilize namespaced url helpers for redirecting, drawing links, placing cross-origin XHR requests, etc. between apps. This is extremely useful when multiple applications are sharing a database, authentication, and/or are powered by a shared [rails engine](http://edgeapi.rubyonrails.org/classes/Rails/Engine.html). 
 
