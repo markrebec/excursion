@@ -1,6 +1,8 @@
 # Excursion
 
+[![Gem Version](https://badge.fury.io/rb/excursion.png)](http://badge.fury.io/rb/excursion)
 [![Build Status](https://travis-ci.org/markrebec/excursion.png)](https://travis-ci.org/markrebec/excursion)
+[![Code Climate](https://codeclimate.com/github/markrebec/excursion.png)](https://codeclimate.com/github/markrebec/excursion)
 
 Excursion provides javascript URL helpers, [CORS](http://en.wikipedia.org/wiki/Cross-origin_resource_sharing) configuration and a pool of routes into which applications can dump their host information and a basic representation of their routing table. Other applications configured to use the same route pool can utilize namespaced url helpers for redirecting, drawing links, placing XHR requests, etc. between apps. This is extremely useful when multiple applications are sharing a database, authentication, and/or are powered by a shared [rails engine](http://edgeapi.rubyonrails.org/classes/Rails/Engine.html). 
 
