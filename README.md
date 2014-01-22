@@ -39,7 +39,7 @@ The helper methods are also extremely handy for shared controllers and views. If
 
 ##### CORS support and javascript helpers
 
-Excursion also provides support for two additional common conerns when navigating cross-application routes: CORS requests and javascript url helpers.  You may optionally include the excursion javascript helpers in your templates, which will provide you with url helper methods in your client-side javascript for all applications in the route pool. And because if you're using the javascript url helpers, it's likely you're making cross-origin XHR requests, excursion also includes optional support for CORS headers and `OPTIONS` requests, with configuration options to control access to your resources.
+Excursion also provides support for two additional common concerns when navigating cross-application routes: CORS requests and javascript url helpers.  You may optionally include the excursion javascript helpers in your templates, which will provide you with url helper methods in your client-side javascript for all applications in the route pool. And because if you're using the javascript url helpers, it's likely you're making cross-origin XHR requests, excursion also includes optional support for CORS headers and `OPTIONS` requests, with configuration options to control access to your resources.
 
 #### A note about `:format` support
 
