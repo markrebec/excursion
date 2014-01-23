@@ -1,4 +1,5 @@
 Dummy::Application.routes.draw do
+  mount Excursion::Engine => '/' if Rails::VERSION::MAJOR >= 4
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
