@@ -22,6 +22,10 @@ module Excursion
       @@applications[name.to_s] = app unless app.nil?
     end
 
+    def self.app_hash_defaults
+      {default_url_options: Excursion.configuration.default_url_options, routes: {}, registered_at: Time.now}
+    end
+
     def self.register_application(app=nil, opts={}, &block)
       raise ArgumentError, "app must be an instance of Rails::Application" unless app.is_a?(Rails::Application) || block_given?
       opts = {store: true}.merge(opts)
@@ -54,7 +58,7 @@ module Excursion
       raise ArgumentError, "you must provide at minimum a hash with a :name key" unless app_hash.is_a?(Hash) && app_hash.has_key?(:name)
       opts = {store: true}.merge(opts)
       
-      app_hash = {default_url_options: Excursion.configuration.default_url_options, routes: {}, registered_at: Time.now}.merge(app_hash)
+      app_hash = app_hash_defaults.merge(app_hash)
       name = app_hash[:name]
 
       if opts[:store]
@@ -77,23 +81,32 @@ module Excursion
       raise NoDatastoreError, "You must configure excursion with a datastore." if Excursion.configuration.datastore.nil?
       require "excursion/datastores/#{Excursion.configuration.datastore.to_s}"
 
-      case Excursion.configuration.datastore.to_sym
-      when :file
-        raise DatastoreConfigurationError, "You must configure the :file datastore with a datastore_file path" if Excursion.configuration.datastore_file.nil?
-        @@datastore ||= Excursion::Datastores::File.new(Excursion.configuration.datastore_file)
-      when :memcache
-        raise MemcacheConfigurationError, "You must configure the :memcache datastore with a memcache_server" if Excursion.configuration.memcache_server.nil?
-        @@datastore ||= Excursion::Datastores::Memcache.new(Excursion.configuration.memcache_server)
-      when :active_record
-        raise TableDoesNotExist, "To use the :active_record datastore you must first run `rails generate excursion:active_record` followed by `rake db:migrate` to create the storage table" unless Excursion::RoutePool.table_exists?
-        @@datastore ||= Excursion::Datastores::ActiveRecord.new
-      when :active_record_with_memcache
-        raise MemcacheConfigurationError, "You must configure the :active_record_with_memcache datastore with a memcache_server" if Excursion.configuration.memcache_server.nil?
-        raise TableDoesNotExist, "To use the :active_record_with_memcache datastore you must first run `rails generate excursion:active_record` followed by `rake db:migrate` to create the storage table" unless Excursion::RoutePool.table_exists?
-        @@datastore ||= Excursion::Datastores::ActiveRecord.new(Excursion.configuration.memcache_server)
-      when :test
+      send "#{Excursion.configuration.datastore.to_sym}_datastore"
+    end
+
+    def self.file_datastore
+      raise DatastoreConfigurationError, "You must configure the :file datastore with a datastore_file" if Excursion.configuration.datastore_file.nil?
+      @@datastore ||= Excursion::Datastores::File.new(Excursion.configuration.datastore_file)
+    end
+
+    def self.memcache_datastore
+      raise MemcacheConfigurationError, "You must configure the :memcache datastore with a memcache_server" if Excursion.configuration.memcache_server.nil?
+      @@datastore ||= Excursion::Datastores::Memcache.new(Excursion.configuration.memcache_server)
+    end
+
+    def self.active_record_datastore
+      raise TableDoesNotExist, "To use the :active_record datastore you must first run `rails generate excursion:active_record` followed by `rake db:migrate` to create the storage table" unless Excursion::RoutePool.table_exists?
+      @@datastore ||= Excursion::Datastores::ActiveRecord.new
+    end
+
+    def self.active_record_with_memcache_datastore
+      raise MemcacheConfigurationError, "You must configure the :active_record_with_memcache datastore with a memcache_server" if Excursion.configuration.memcache_server.nil?
+      raise TableDoesNotExist, "To use the :active_record_with_memcache datastore you must first run `rails generate excursion:active_record` followed by `rake db:migrate` to create the storage table" unless Excursion::RoutePool.table_exists?
+      @@datastore ||= Excursion::Datastores::ActiveRecord.new(Excursion.configuration.memcache_server)
+    end
+
+    def self.test_datastore
         @@datastore ||= Excursion::Datastores::Test.new
-      end
     end
 
     def self.pool_updated
