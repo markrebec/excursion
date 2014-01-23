@@ -59,7 +59,7 @@ The url helpers are automatically included into your controllers and views, and 
 
 ## Installation
 
-Excursion is written for Rails, which means you should have a Gemfile and be using bundler. To start using excursion, add this to your application Gemfile:
+Excursion is written for Rails and requires `rails >= 3.2.0`, which means you should have a Gemfile and be using bundler. To start using excursion, add this to your application Gemfile:
 
     gem 'excursion'
 
