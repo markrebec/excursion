@@ -20,10 +20,17 @@ module Excursion
       !Excursion.configuration.cors_blacklist.nil? && !Excursion.configuration.cors_blacklist.any? { |cb| cors_match? origin, cb }
     end
 
+    def origin_header
+      request.headers['Origin'] || request.headers['HTTP_ORIGIN']
+    end
+
+    def origin_allowed?
+      !origin_header.nil? && cors_whitelisted?(origin_header) && !cors_blacklisted?(origin_header)
+    end
+
     def cors_headers
-      origin = request.headers['Origin'] || request.headers['HTTP_ORIGIN']
-      if !origin.nil? && cors_whitelisted?(origin) && !cors_blacklisted?(origin)
-        headers['Access-Control-Allow-Origin'] = request.headers['Origin']
+      if origin_allowed?
+        headers['Access-Control-Allow-Origin'] = origin_header
         headers['Access-Control-Allow-Methods'] = Excursion.configuration.cors_allow_methods.join(',')
         headers['Access-Control-Allow-Headers'] = Excursion.configuration.cors_allow_headers.join(', ')
         headers['Access-Control-Allow-Credentials'] = Excursion.configuration.cors_allow_credentials.to_s
