@@ -49,7 +49,7 @@ describe 'Excursion::Pool' do
       it 'should require the memcache_server option be configured' do
         Excursion.configuration.datastore = :memcache
         Excursion.configuration.memcache_server = nil
-        expect { Excursion::Pool.datastore }.to raise_exception(Excursion::MemcacheConfigurationError)
+        expect { Excursion::Pool.datastore }.to raise_exception(Excursion::DatastoreConfigurationError)
       end
       
       it 'should return an instance of Excursion::Datastores::Memcache' do

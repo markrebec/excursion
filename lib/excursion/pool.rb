@@ -84,14 +84,21 @@ module Excursion
       send "#{Excursion.configuration.datastore.to_sym}_datastore"
     end
 
+    def self.datastore_class(type)
+      "Excursion::Datastores::#{type.to_s.capitalize}".constantize
+    end
+
+    def self.simple_datastore(type, config_opt)
+      raise DatastoreConfigurationError, "You must configure the :#{type.to_s} datastore with a #{config_opt.to_s}" if Excursion.configuration.send(config_opt.to_sym).nil?
+      @@datastore ||= datastore_class(type).new(Excursion.configuration.send(config_opt.to_sym))
+    end
+
     def self.file_datastore
-      raise DatastoreConfigurationError, "You must configure the :file datastore with a datastore_file" if Excursion.configuration.datastore_file.nil?
-      @@datastore ||= Excursion::Datastores::File.new(Excursion.configuration.datastore_file)
+      simple_datastore(:file, :datastore_file)
     end
 
     def self.memcache_datastore
-      raise MemcacheConfigurationError, "You must configure the :memcache datastore with a memcache_server" if Excursion.configuration.memcache_server.nil?
-      @@datastore ||= Excursion::Datastores::Memcache.new(Excursion.configuration.memcache_server)
+      simple_datastore(:memcache, :memcache_server)
     end
 
     def self.active_record_datastore
