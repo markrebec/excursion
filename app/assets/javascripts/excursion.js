@@ -171,7 +171,7 @@ Base64 = (function() {
         thisApp[routeName + '_url'] = function() {
           var args = Array.prototype.slice.call(arguments);
 
-          if (args[args.length - 1].host) {
+          if (args.length > 0 && args[args.length - 1].host) {
             var urlArgs = args.pop();
             if (!urlArgs.port)
               urlArgs.port = thisApp.default_url_options.port;
