@@ -1,3 +1,6 @@
+0.2.1:
+* Fix for bug introduced in 0.2.0 when no arguments are passed to javascript url helpers (sigh...)
+
 0.2.0:
 * Adds support for passing json url options to javascript url helpers
 
