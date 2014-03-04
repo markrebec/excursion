@@ -169,11 +169,21 @@ Base64 = (function() {
           return replaced;
         };
         thisApp[routeName + '_url'] = function() {
-          var urlOpts = window.location.protocol + '//' + thisApp.default_url_options.host;
-          if (thisApp.default_url_options.port && parseInt(thisApp.default_url_options.port) != 80)
-            urlOpts += ':' + thisApp.default_url_options.port;
+          var args = Array.prototype.slice.call(arguments);
+
+          if (args[args.length - 1].host) {
+            var urlArgs = args.pop();
+            if (!urlArgs.port)
+              urlArgs.port = thisApp.default_url_options.port;
+          } else {
+            var urlArgs = thisApp.default_url_options;
+          }
+            
+          var urlOpts = window.location.protocol + '//' + urlArgs.host;
+          if (urlArgs.port && parseInt(urlArgs.port) != 80)
+            urlOpts += ':' + urlArgs.port;
           
-          return urlOpts + thisApp[routeName + '_path'](arguments);
+          return urlOpts + thisApp[routeName + '_path'](args);
         };
       }(this));
     }
