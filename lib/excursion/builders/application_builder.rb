@@ -13,9 +13,9 @@ module Excursion
       end
 
       def method_missing(meth, *args)
-        excursion(meth.to_s)
-      rescue
         super
+      rescue NoMethodError => e
+        excursion(meth.to_s)
       end
 
       def respond_to_missing?(meth, include_private=false)
