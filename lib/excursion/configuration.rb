@@ -7,6 +7,8 @@ module Excursion
       register_app: true, # whether or not to register the app automatically on init
       default_url_options: {}, # default_url_options used when building routes for this app
       retry_limit: 3, # retry limit for datastores that user remote servers
+      suppress_errors: true,
+      stubbed_route_path: 'excursion/not-found',
       enable_cors: false, # enables cross-origin resource sharing for this app
       cors_whitelist: :pool, # whitelist for allowing cors for specific domains - defaults to only allow registered excursion apps
       cors_blacklist: nil, # blacklist for denying cors for specific domains

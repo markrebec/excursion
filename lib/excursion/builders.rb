@@ -1,5 +1,6 @@
 require 'excursion/builders/application_builder'
 require 'excursion/builders/url_builder'
+require 'excursion/builders/stub_builder'
 
 module Excursion
   module Builders
